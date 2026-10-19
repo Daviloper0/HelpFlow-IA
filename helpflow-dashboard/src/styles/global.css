@@ -1,0 +1,110 @@
+/* Tokens de design do HelpFlow. Todos os módulos usam estas variáveis. */
+:root {
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Texto */
+  --ink: #121722;
+  --ink-soft: #2b3342;
+  --muted: #4b5565;
+  --muted-icon: #667085;
+
+  /* Superfícies e linhas */
+  --bg: #f2f4f7;
+  --surface: #ffffff;
+  --surface-alt: #f8f9fb;
+  --line: #d9dee6;
+  --line-soft: #e4e7ec;
+  --line-strong: #c3cad6;
+  --field-border: #8791a3;
+
+  /* Cor de destaque */
+  --accent: #2347c5;
+  --accent-dark: #1b39a0;
+  --accent-soft: #e8eefb;
+  --accent-softer: #f3f6fe;
+
+  /* Estados */
+  --success-bg: #e3f4ea;
+  --success-fg: #0f6b3a;
+  --success-dot: #1f9254;
+  --warning-bg: #fdf0d8;
+  --warning-fg: #8a5300;
+  --warning-dot: #b87503;
+  --danger-bg: #fde8e6;
+  --danger-fg: #a3231a;
+  --danger-deep: #7a1b14;
+  --danger-dot: #d23b2e;
+  --idle-bg: #eef0f3;
+  --idle-dot: #8791a3;
+
+  /* Menu lateral */
+  --sidebar-bg: #121722;
+  --sidebar-text: #c9d0dc;
+  --sidebar-hover: #1f2736;
+  --sidebar-active: #232b3b;
+  --sidebar-active-hover: #2e384c;
+
+  /* Bloco de código */
+  --code-bg: #121722;
+  --code-text: #e6e9ef;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p,
+ul,
+dl,
+dd {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

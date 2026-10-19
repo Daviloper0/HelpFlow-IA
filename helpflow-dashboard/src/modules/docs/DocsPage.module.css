@@ -1,0 +1,21 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.count {
+  color: var(--muted);
+  font: 400 14px/1.2 var(--font-sans);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.loading {
+  color: var(--muted);
+  font: 400 14px/1.5 var(--font-sans);
+}

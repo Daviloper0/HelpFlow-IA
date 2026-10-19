@@ -1,0 +1,15 @@
+.statusRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px 24px;
+}
+
+.statusField {
+  flex: 0 0 140px;
+}
+
+.categoryField {
+  flex: 1 1 320px;
+  min-width: 0;
+}

@@ -1,0 +1,76 @@
+.sidebar {
+  display: flex;
+  flex: 1 1 240px;
+  flex-direction: column;
+  gap: 32px;
+  padding: 28px 16px;
+  background: var(--sidebar-bg);
+  color: #e6e9ef;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px;
+}
+
+.logo {
+  display: block;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.name {
+  color: #fff;
+  font: 600 18px/1.1 var(--font-sans);
+}
+
+.tagline {
+  color: #9aa4b5;
+  font: 400 12px/1.2 var(--font-sans);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--sidebar-text);
+  font: 500 14px/1 var(--font-sans);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.12s;
+}
+
+.item:hover {
+  background: var(--sidebar-hover);
+}
+
+.active {
+  background: var(--sidebar-active);
+  color: #fff;
+}
+
+.active:hover {
+  background: var(--sidebar-active-hover);
+}

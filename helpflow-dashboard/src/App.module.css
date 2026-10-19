@@ -1,0 +1,18 @@
+/* Menu lateral à esquerda e conteúdo à direita. Os dois sempre vão até o fim da tela.
+   Em telas estreitas o menu passa para cima do conteúdo. */
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: stretch;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 999 1 560px;
+  min-width: 0;
+  padding: 40px clamp(16px, 4vw, 48px) 72px;
+}
+
+.content {
+  max-width: 1080px;
+}

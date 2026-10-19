@@ -1,0 +1,53 @@
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 12px;
+}
+
+.bad {
+  background: var(--danger-bg);
+  color: var(--danger-deep);
+}
+.bad .icon {
+  color: var(--danger-dot);
+}
+
+.info {
+  background: var(--accent-soft);
+  color: #1b2f7a;
+}
+.info .icon {
+  color: var(--accent);
+}
+
+.good {
+  background: var(--success-bg);
+  color: #0f5a31;
+}
+.good .icon {
+  color: var(--success-dot);
+}
+
+.icon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
+.content {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.label {
+  margin-bottom: 6px;
+  font: 600 12px/1.3 var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.text {
+  font: 500 16px/1.55 var(--font-sans);
+}

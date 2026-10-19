@@ -1,0 +1,107 @@
+.button,
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.12s, border-color 0.12s;
+}
+
+.button:disabled,
+.iconButton:disabled {
+  cursor: not-allowed;
+}
+
+/* ---- Botões com texto ---- */
+
+.button {
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  font: 600 14px/1 var(--font-sans);
+}
+
+.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.primary:hover:not(:disabled) {
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
+}
+.primary:disabled {
+  background: #8c9bd6;
+  border-color: #8c9bd6;
+}
+
+.secondary {
+  background: var(--surface);
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+.secondary:hover:not(:disabled) {
+  background: #e8ecf3;
+  border-color: #98a2b3;
+}
+
+.outline {
+  background: var(--surface);
+  border-color: var(--accent);
+  color: var(--accent-dark);
+}
+.outline:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+.outline:disabled {
+  border-color: var(--line-strong);
+  color: var(--idle-dot);
+}
+
+.danger {
+  background: var(--danger-fg);
+  border-color: var(--danger-fg);
+  color: #fff;
+}
+.danger:hover:not(:disabled) {
+  background: #862019;
+  border-color: #862019;
+}
+
+/* ---- Botões só com ícone ---- */
+
+.iconButton {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+}
+
+.toneNeutral {
+  background: var(--surface);
+  border-color: var(--line-strong);
+  color: var(--ink-soft);
+}
+.toneNeutral:hover:not(:disabled) {
+  background: #e8ecf3;
+  border-color: #98a2b3;
+}
+
+.toneDanger {
+  background: var(--surface);
+  border-color: var(--line-strong);
+  color: var(--danger-fg);
+}
+.toneDanger:hover:not(:disabled) {
+  background: var(--danger-bg);
+  border-color: #e9a8a2;
+}
+
+.toneGhost {
+  background: transparent;
+  color: var(--ink-soft);
+}
+.toneGhost:hover:not(:disabled) {
+  background: #e8ecf3;
+}

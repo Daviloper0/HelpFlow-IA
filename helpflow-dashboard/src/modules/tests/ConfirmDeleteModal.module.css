@@ -1,0 +1,4 @@
+.text {
+  color: var(--muted);
+  font: 400 14px/1.6 var(--font-sans);
+}

@@ -1,0 +1,25 @@
+.code {
+  margin: 0;
+  overflow-x: auto;
+  border-radius: 8px;
+  font: 400 13px/1.7 var(--font-mono);
+  white-space: pre;
+}
+
+.dark {
+  padding: 14px 16px;
+  background: var(--code-bg);
+  color: var(--code-text);
+}
+
+.light {
+  padding: 12px;
+  border: 1px solid var(--line-soft);
+  background: var(--surface-alt);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.wrap {
+  white-space: pre-wrap;
+}

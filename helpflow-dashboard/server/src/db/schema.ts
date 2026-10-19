@@ -1,0 +1,59 @@
+import Database from 'better-sqlite3';
+import fs from 'fs';
+import path from 'path';
+
+const DATA_DIR = path.join(__dirname, '../../data');
+const DB_PATH = process.env.DB_PATH ?? path.join(DATA_DIR, 'helpflow.db');
+
+fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
+
+export const db = new Database(DB_PATH);
+
+db.pragma('journal_mode = WAL');
+db.pragma('foreign_keys = ON');
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS tests (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    name            TEXT    NOT NULL,
+    method          TEXT    NOT NULL CHECK(method IN ('GET','POST','PUT','PATCH','DELETE')),
+    description     TEXT    NOT NULL DEFAULT '',
+    route           TEXT    NOT NULL,
+    request_body    TEXT    NOT NULL DEFAULT '',
+    expected_status INTEGER NOT NULL,
+    expected_body   TEXT    NOT NULL DEFAULT '',
+    category        TEXT    NOT NULL CHECK(category IN ('success','validation','expected-error')),
+    created_at      INTEGER NOT NULL DEFAULT (unixepoch() * 1000)
+  );
+
+  CREATE TABLE IF NOT EXISTS executions (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    test_id         INTEGER NOT NULL REFERENCES tests(id) ON DELETE CASCADE,
+    actual_status   INTEGER NOT NULL,
+    actual_body     TEXT    NOT NULL DEFAULT '',
+    passed          INTEGER NOT NULL CHECK(passed IN (0,1)),
+    failure_message TEXT    NOT NULL DEFAULT '',
+    ran_at          INTEGER NOT NULL,
+    duration_ms     INTEGER NOT NULL
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_executions_test_id_ran_at
+    ON executions(test_id, ran_at DESC);
+
+  CREATE TABLE IF NOT EXISTS doc_routes (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    method         TEXT    NOT NULL CHECK(method IN ('GET','POST','PUT','PATCH','DELETE')),
+    route          TEXT    NOT NULL,
+    title          TEXT    NOT NULL,
+    request_body   TEXT    NOT NULL DEFAULT '',
+    success_status INTEGER NOT NULL,
+    success_body   TEXT    NOT NULL DEFAULT ''
+  );
+
+  CREATE TABLE IF NOT EXISTS doc_route_errors (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    route_id INTEGER NOT NULL REFERENCES doc_routes(id) ON DELETE CASCADE,
+    status   INTEGER NOT NULL,
+    body     TEXT    NOT NULL DEFAULT ''
+  );
+`);

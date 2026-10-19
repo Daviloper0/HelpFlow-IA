@@ -1,0 +1,83 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px 16px;
+  overflow-y: auto;
+  background: rgba(18, 23, 34, 0.58);
+}
+
+.dialog {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 24px 64px rgba(18, 23, 34, 0.35);
+}
+
+.sm {
+  max-width: 440px;
+  margin-block: auto;
+}
+.md {
+  max-width: 680px;
+}
+.lg {
+  max-width: 700px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding-top: 6px;
+}
+
+.title {
+  color: var(--ink);
+  font: 600 20px/1.3 var(--font-sans);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 24px;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--line-soft);
+  background: var(--surface-alt);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionTitle {
+  color: var(--muted);
+  font: 600 12px/1 var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

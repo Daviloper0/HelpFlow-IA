@@ -1,0 +1,95 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  scroll-margin-top: 24px;
+  transition: box-shadow 0.2s, background-color 0.2s, border-color 0.2s;
+}
+
+.highlighted {
+  border-color: var(--accent);
+  background: var(--accent-softer);
+  box-shadow: 0 0 0 3px rgba(35, 71, 197, 0.25);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.info {
+  flex: 1 1 340px;
+  min-width: 0;
+}
+
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.name {
+  color: var(--ink);
+  font: 600 16px/1.35 var(--font-sans);
+}
+
+.description {
+  margin-top: 8px;
+  color: var(--muted);
+  font: 400 14px/1.5 var(--font-sans);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: 12px;
+}
+
+.route {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--ink);
+  font: 500 13px/1.2 var(--font-mono);
+  word-break: break-all;
+}
+
+.expected {
+  color: var(--muted);
+  font: 400 13px/1.2 var(--font-sans);
+}
+
+.expected strong {
+  color: var(--ink);
+  font: 600 13px/1.2 var(--font-mono);
+}
+
+.actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.failure {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--danger-bg);
+  color: var(--danger-deep);
+  font: 500 13px/1.4 var(--font-sans);
+}
