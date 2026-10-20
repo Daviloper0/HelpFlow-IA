@@ -53,3 +53,19 @@
   font: 500 13px/1.2 var(--font-mono);
   word-break: break-all;
 }
+
+.bodyBox {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bodyBad {
+  border: 1px solid #e9a8a2;
+  background: var(--danger-bg);
+}
+
+.promptHint {
+  color: var(--muted);
+  font: 400 13px/1.5 var(--font-sans);
+  margin: 0;
+}

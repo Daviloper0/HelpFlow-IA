@@ -15,6 +15,7 @@ export interface TestRow {
   created_at: number;
   // Joined from executions (nullable when no run exists)
   last_actual_status: number | null;
+  last_actual_body: string | null;
   last_ran_at: number | null;
   last_passed: number | null;
   last_failure_message: string | null;
@@ -32,6 +33,7 @@ export interface ApiTestJson {
   category: string;
   lastRun?: {
     actualStatus: number;
+    actualBody: string;
     at: number;
     passed: boolean;
     failureMessage: string;
@@ -54,6 +56,7 @@ function rowToJson(row: TestRow): ApiTestJson {
   if (row.last_ran_at !== null && row.last_actual_status !== null) {
     test.lastRun = {
       actualStatus: row.last_actual_status,
+      actualBody: row.last_actual_body ?? '',
       at: row.last_ran_at,
       passed: row.last_passed === 1,
       failureMessage: row.last_failure_message ?? '',
@@ -67,6 +70,7 @@ const LIST_TESTS_SQL = `
   SELECT
     t.*,
     e.actual_status  AS last_actual_status,
+    e.actual_body    AS last_actual_body,
     e.ran_at         AS last_ran_at,
     e.passed         AS last_passed,
     e.failure_message AS last_failure_message

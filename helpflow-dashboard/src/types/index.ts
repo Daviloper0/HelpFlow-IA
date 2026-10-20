@@ -13,6 +13,8 @@ export type TestStatus = 'idle' | 'running' | 'pass' | 'fail';
 /** Resultado de uma execução de teste. */
 export interface TestRun {
   actualStatus: number;
+  /** Corpo da resposta recebida, como texto. */
+  actualBody: string;
   /** Momento da execução, em milissegundos (Date.now). */
   at: number;
   /** Determinado pelo backend com base no status e no body esperados. */

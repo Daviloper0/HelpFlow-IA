@@ -4,9 +4,21 @@
   gap: 12px;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .title {
   color: var(--ink);
   font: 600 18px/1.3 var(--font-sans);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
 }
 
 .list {

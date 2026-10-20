@@ -4,6 +4,10 @@ import { getTestById, insertExecution, listTests } from '../db/queries';
 import { executeRequest } from '../lib/executor';
 import { validate } from '../lib/validator';
 
+function interpolate(body: string): string {
+  return body.replace(/\{\{timestamp\}\}/g, Date.now().toString());
+}
+
 export const runnerRouter = Router();
 
 /** Run a single test by id. Returns the TestRun object the frontend expects. */
@@ -17,7 +21,7 @@ runnerRouter.post('/:id/run', async (req, res) => {
   const result = await executeRequest(
     test.method,
     test.route,
-    test.requestBody,
+    interpolate(test.requestBody),
     config.helpflowBaseUrl,
     config.requestTimeoutMs,
   );
@@ -44,6 +48,7 @@ runnerRouter.post('/:id/run', async (req, res) => {
 
   return res.json({
     actualStatus: result.actualStatus,
+    actualBody: result.actualBody,
     at: ranAt,
     passed,
     failureMessage,
@@ -63,7 +68,7 @@ runnerRouter.post('/run-all', async (_req, res) => {
     const result = await executeRequest(
       test.method,
       test.route,
-      test.requestBody,
+      interpolate(test.requestBody),
       config.helpflowBaseUrl,
       config.requestTimeoutMs,
     );
@@ -91,6 +96,7 @@ runnerRouter.post('/run-all', async (_req, res) => {
     results.push({
       testId: test.id,
       actualStatus: result.actualStatus,
+      actualBody: result.actualBody,
       at: ranAt,
       passed,
       failureMessage,

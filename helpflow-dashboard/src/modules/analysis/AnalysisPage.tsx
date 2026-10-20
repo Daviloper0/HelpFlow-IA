@@ -5,6 +5,7 @@ import { buildSummary } from '../../utils/summary';
 import { countStatuses, getLastRunAt } from '../../utils/testStatus';
 import { FailedTests } from './FailedTests';
 import { FailureDetailModal } from './FailureDetailModal';
+import { PassedTests } from './PassedTests';
 import { OpenApiCard } from './OpenApiCard';
 import { StatCards } from './StatCards';
 import { SummaryBanner } from './SummaryBanner';
@@ -27,7 +28,8 @@ export function AnalysisPage({ tests, openApi, onGoToTest }: AnalysisPageProps) 
   const lastRunAt = getLastRunAt(tests);
 
   const failedTests = tests.filter((test) => test.status === 'fail');
-  const selectedTest = failedTests.find((test) => test.id === selectedId);
+  const passedTests = tests.filter((test) => test.status === 'pass');
+  const selectedTest = tests.find((test) => test.id === selectedId);
 
   return (
     <div className={styles.page}>
@@ -36,6 +38,7 @@ export function AnalysisPage({ tests, openApi, onGoToTest }: AnalysisPageProps) 
       <SummaryBanner summary={summary} />
       <StatCards counts={counts} lastRunAt={lastRunAt} />
       <FailedTests failedTests={failedTests} counts={counts} onSelect={setSelectedId} />
+      <PassedTests passedTests={passedTests} onSelect={setSelectedId} />
       <OpenApiCard status={openApi} />
 
       {selectedTest && (

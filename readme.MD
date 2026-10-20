@@ -250,6 +250,72 @@ Do not hide limitations or claim tests passed without actually running them.
 
 Prioritize an implementation that is simple, functional, understandable, and maintainable.
 
-# Respostas
+## Respostas para perguntas
 The dashboard backend can run on 3001, the helpflow is already defined, do not worry about it. Just worry about the backend. The expectedBody should affect pass/fail, it should be an exact JSON match. Any more questions?
 
+# Updates 
+In the front end, on the failed test analisys window, there should also be a recieved response. Now, it's only, request and expected value, so add that other one. 
+
+Now, again, on the failed test analyisys window, there should be a standarized prompt that says what's expected, what was the request and what was the given response. There is no need to analyze, but the prompt should be in such way that doesn't matter what error or what request is given, it will help in development
+
+Analyze the entire HelpFlow Haskell codebase and identify all API routes, HTTP methods, request and response types, validation rules, business logic, and possible error responses.
+
+Compare this information with the existing registered tests in the dashboard. Identify missing coverage, prioritizing positive tests for every route (valid requests that exercise the expected successful behavior). Also add relevant negative tests for invalid inputs, validation failures, and expected errors.
+
+For each missing test:
+
+Define the name, HTTP method, endpoint, description, request headers and body when applicable.
+
+Specify the expected HTTP status code and response validation criteria.
+
+Assign an appropriate category, such as success, input validation, or expected error.
+
+Follow the actual implementation and business rules. Do not invent routes, request fields, response structures, or expected behavior. If something cannot be determined from the code, explicitly flag it for review.
+
+Avoid duplicating existing tests. If possible, create the missing test cases in the dashboard's existing format. Otherwise, provide them in a structured format that can be imported or added easily.
+
+Finally, summarize the routes analyzed, existing coverage, missing tests, and any uncertainties. Do not claim tests pass until they have actually been executed against the running API.
+
+All your tests that you added now are with � in everywhere that has some kind of accent, it didn't happen before. Also, all your tests didn't work. Check again if you understood how the tickets flow work. You are trying to promote an user that don't even exist. The same happens for tickets. And now I want the analysis window to close when clicked outside.
+
+
+Now, add a button on the right of the section title "Testes que falharam na última execução" that copies all the tests that failed, no need for aditional text, only the request sent, expected response and actual response received.
+
+Below are all tests that fail. For each one, investigate and analyze why it isn't passing the test. Do not change any code, unless you ask for permission. Explain your decisions.
+
+To fix the group one, I want you to implement not only the promote route, because that wouldn't be enough, but I actually want you to analyze the project strucutre, understand how the files are named, and create an actual way to promote. Respect all data kinds, types and type families. If there is something that could break, don't do it. Instead, ask for permission.
+
+PROBLEMA ATUAL: OS USUARIOS JÁ EXISTEM
+OS TESTES ESTÃO USANDO USUÁRIOS FICTÍCIOS, 0000001
+ALGUNS OUTROS
+
+There are a couple of problems with the tests that were created and how it is shown to the user. When the body isn't equal to what's expected, in the analysis window, the recieved HTTP code (such as 200) appears as red, even if it's equal to the status. You should make the background red for what is mismatching, not always for the http code. The second problem is that you are using users that do not exist. So either you first create them, and use their user to create a ticket, for example, or you create a test user in the database.
+
+Now, below the failed tests section, create a collapsed section that is "Testes que passaram na última execução". The title must be the same size, and same font as the "Testes que falharam na última execução", and the collpased section must be below the title, hidden. There should be a toggle button on the right side of the title, that expands and unhidden the section. When expanded, the section must look exactly like the failed tests section, but with all tests that passed. If a user clicks on the test that passed, a analysis window should open, exactly like the failed tests section. If the user clicks the toggle button again, it should hide the passed tests section. If something is not clear, ask for clarification.
+
+All tests that are passing do not contain any body from server, even when it should. An example is the "Rejeitar email duplicado" test, that should reject duplicate emails. In the serverside, it does throw 409 error, but there is a message in the body, with a message, the error for that example is "email_already_exists" and the message is "Email já cadastrado". So either we aren't recieving the body or we aren't storing it in the tests section.
+
+There is another problem with the passed tests. They aren't expecting any body yet, but they recieve a body, and the test pass anyways. The test must only pass if the expected body is equal to the recieved body. And if it's not, then highlight the recieved body as red, with the same color scheme as the wrong recieved status.
+
+Now, simillarly to the passing tests section, create a colpase button near the "Copiar falhas" button, on the right side. There should be a gap between the two buttons. All the failed tests must start collapsed by default, and the button must behave like the passing tests button.
+# Fixing the tests
+Now, all the tests are failing because the body is not what it's expecting. The API code structure is the following, when it's an error:
+{
+    "errorCode":"ERROR_MESSAGE_IN_UPPERCASE",
+    "errorMessage":"Error description"
+}
+If you don't have the possible errorMessages, ask me, but the errorCodes are correct, so you only need to add the errorMessage to the expected body section of the tests
+
+The expectedBody must be equal to the recieved body for the test to pass. No additional fields at all. An example is on the post of a unknown category, it expects {"category": "Other"}, but recieves {"assignedTo":null,"category":"Other","createdBy":"7f856fb4-88f9-4788-8097-61bcf463509a","description":"Desc","id":9,"priority":"Low","status":"Open","title":"Problema"}
+and the test still pass, when it shouldn't.
+
+The test MUST only pass when the bodies are equal. If the test doesn't expect a body and it recieves a body, it must be treated as a test that didn't pass.
+
+Now that the test suit is WORKING, let's fix the register valid user test. The problem with it is that it can't create the same user twice. To fix that, add a timestamp to the email, so that it's never the same.
+
+
+# Como rodar:
+Dentro de helpflow-dashboard, rodar:
+* npm run dev (rodar frontend)
+e depois: cd server
+e por fim: npm run dev novamente

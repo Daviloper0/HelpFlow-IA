@@ -30,20 +30,26 @@ export function validate(
     };
   }
 
-  if (expectedBody.trim()) {
-    const bodyResult = compareJson(actualBody, expectedBody);
-    if (!bodyResult.match) {
-      return { passed: false, failureMessage: bodyResult.reason };
-    }
+  const bodyResult = compareJson(actualBody, expectedBody);
+  if (!bodyResult.match) {
+    return { passed: false, failureMessage: bodyResult.reason };
   }
 
   return { passed: true, failureMessage: '' };
 }
 
+
 function compareJson(
   actual: string,
   expected: string,
 ): { match: true } | { match: false; reason: string } {
+  const actualEmpty = !actual.trim();
+  const expectedEmpty = !expected.trim();
+
+  if (expectedEmpty && actualEmpty) return { match: true };
+  if (expectedEmpty && !actualEmpty) return { match: false, reason: 'Nenhum body era esperado, mas a resposta contém um body' };
+  if (!expectedEmpty && actualEmpty) return { match: false, reason: 'Body esperado, mas a resposta não contém body' };
+
   let parsedActual: unknown;
   let parsedExpected: unknown;
 

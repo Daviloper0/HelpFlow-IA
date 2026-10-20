@@ -15,7 +15,7 @@ interface ModalProps {
   footer: ReactNode;
 }
 
-/** Janela sobreposta. Fecha com o botão X, com os botões do rodapé ou com a tecla Esc. */
+/** Janela sobreposta. Fecha com o botão X, com os botões do rodapé, com a tecla Esc ou clicando fora. */
 export function Modal({ title, badge, size = 'lg', onClose, children, footer }: ModalProps) {
   const titleId = useId();
 
@@ -28,8 +28,17 @@ export function Modal({ title, badge, size = 'lg', onClose, children, footer }: 
   }, [onClose]);
 
   return (
-    <div className={styles.overlay}>
-      <div role="dialog" aria-modal="true" aria-labelledby={titleId} className={cx(styles.dialog, styles[size])}>
+    <div
+      className={styles.overlay}
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className={cx(styles.dialog, styles[size])}
+        onClick={(e) => e.stopPropagation()}
+      >
         <header className={styles.header}>
           <div className={styles.titleRow}>
             {badge}

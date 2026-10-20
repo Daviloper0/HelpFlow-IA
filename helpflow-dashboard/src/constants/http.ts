@@ -1,7 +1,7 @@
 import type { HttpMethod, TestCategory, TestStatus } from '../types';
 
 /** Base URL of the HelpFlow API — used only in curl examples in the Docs module. */
-export const HELPFLOW_BASE_URL = 'http://localhost:8080';
+export const HELPFLOW_BASE_URL = 'http://localhost:4284';
 
 /** @deprecated Use HELPFLOW_BASE_URL for curl examples. Dashboard API calls are relative (proxied by Vite). */
 export const API_BASE_URL = HELPFLOW_BASE_URL;
