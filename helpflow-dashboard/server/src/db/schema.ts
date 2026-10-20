@@ -39,6 +39,15 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_executions_test_id_ran_at
     ON executions(test_id, ran_at DESC);
+`);
+
+// Migration: add actual_request_body to executions if not present
+const cols = (db.pragma('table_info(executions)') as { name: string }[]).map((c) => c.name);
+if (!cols.includes('actual_request_body')) {
+  db.exec(`ALTER TABLE executions ADD COLUMN actual_request_body TEXT NOT NULL DEFAULT ''`);
+}
+
+db.exec(`
 
   CREATE TABLE IF NOT EXISTS doc_routes (
     id             INTEGER PRIMARY KEY AUTOINCREMENT,

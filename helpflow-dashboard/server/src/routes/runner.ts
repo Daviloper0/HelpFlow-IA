@@ -18,10 +18,11 @@ runnerRouter.post('/:id/run', async (req, res) => {
   const test = getTestById(id);
   if (!test) return res.status(404).json({ error: 'Test not found' });
 
+  const actualRequestBody = interpolate(test.requestBody);
   const result = await executeRequest(
     test.method,
     test.route,
-    interpolate(test.requestBody),
+    actualRequestBody,
     config.helpflowBaseUrl,
     config.requestTimeoutMs,
   );
@@ -40,6 +41,7 @@ runnerRouter.post('/:id/run', async (req, res) => {
     testId: id,
     actualStatus: result.actualStatus,
     actualBody: result.actualBody,
+    actualRequestBody,
     passed,
     failureMessage,
     ranAt,
@@ -49,6 +51,7 @@ runnerRouter.post('/:id/run', async (req, res) => {
   return res.json({
     actualStatus: result.actualStatus,
     actualBody: result.actualBody,
+    actualRequestBody,
     at: ranAt,
     passed,
     failureMessage,
@@ -65,10 +68,11 @@ runnerRouter.post('/run-all', async (_req, res) => {
 
   const results = [];
   for (const test of tests) {
+    const actualRequestBody = interpolate(test.requestBody);
     const result = await executeRequest(
       test.method,
       test.route,
-      interpolate(test.requestBody),
+      actualRequestBody,
       config.helpflowBaseUrl,
       config.requestTimeoutMs,
     );
@@ -87,6 +91,7 @@ runnerRouter.post('/run-all', async (_req, res) => {
       testId: test.id,
       actualStatus: result.actualStatus,
       actualBody: result.actualBody,
+      actualRequestBody,
       passed,
       failureMessage,
       ranAt,
@@ -97,6 +102,7 @@ runnerRouter.post('/run-all', async (_req, res) => {
       testId: test.id,
       actualStatus: result.actualStatus,
       actualBody: result.actualBody,
+      actualRequestBody,
       at: ranAt,
       passed,
       failureMessage,

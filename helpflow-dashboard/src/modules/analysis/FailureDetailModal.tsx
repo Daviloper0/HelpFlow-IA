@@ -53,8 +53,8 @@ function buildDebugPrompt(test: TestView): string {
     ``,
     `## Request sent`,
     `${test.method} ${test.route}`,
-    test.requestBody.trim()
-      ? `Body:\n${test.requestBody}`
+    (test.lastRun?.actualRequestBody || test.requestBody).trim()
+      ? `Body:\n${test.lastRun?.actualRequestBody || test.requestBody}`
       : `(no request body)`,
     ``,
     `## Expected response`,
@@ -132,7 +132,7 @@ export function FailureDetailModal({ test, onClose, onGoToTest }: FailureDetailM
       <ModalSection title="Requisição">
         <code className={styles.route}>{test.route}</code>
         <CodeBlock tone="light" wrap>
-          {test.requestBody || 'Sem corpo na requisição.'}
+          {test.lastRun?.actualRequestBody || test.requestBody || 'Sem corpo na requisição.'}
         </CodeBlock>
       </ModalSection>
 

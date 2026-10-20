@@ -313,7 +313,7 @@ The test MUST only pass when the bodies are equal. If the test doesn't expect a 
 
 Now that the test suit is WORKING, let's fix the register valid user test. The problem with it is that it can't create the same user twice. To fix that, add a timestamp to the email, so that it's never the same.
 
-
+Don't show the template, show the actual request that is being sent to the server. It's working now.
 # Como rodar:
 Dentro de helpflow-dashboard, rodar:
 * npm run dev (rodar frontend)

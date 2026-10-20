@@ -16,6 +16,7 @@ export interface TestRow {
   // Joined from executions (nullable when no run exists)
   last_actual_status: number | null;
   last_actual_body: string | null;
+  last_actual_request_body: string | null;
   last_ran_at: number | null;
   last_passed: number | null;
   last_failure_message: string | null;
@@ -34,6 +35,7 @@ export interface ApiTestJson {
   lastRun?: {
     actualStatus: number;
     actualBody: string;
+    actualRequestBody: string;
     at: number;
     passed: boolean;
     failureMessage: string;
@@ -57,6 +59,7 @@ function rowToJson(row: TestRow): ApiTestJson {
     test.lastRun = {
       actualStatus: row.last_actual_status,
       actualBody: row.last_actual_body ?? '',
+      actualRequestBody: row.last_actual_request_body ?? '',
       at: row.last_ran_at,
       passed: row.last_passed === 1,
       failureMessage: row.last_failure_message ?? '',
@@ -69,9 +72,10 @@ function rowToJson(row: TestRow): ApiTestJson {
 const LIST_TESTS_SQL = `
   SELECT
     t.*,
-    e.actual_status  AS last_actual_status,
-    e.actual_body    AS last_actual_body,
-    e.ran_at         AS last_ran_at,
+    e.actual_status        AS last_actual_status,
+    e.actual_body          AS last_actual_body,
+    e.actual_request_body  AS last_actual_request_body,
+    e.ran_at               AS last_ran_at,
     e.passed         AS last_passed,
     e.failure_message AS last_failure_message
   FROM tests t
@@ -139,6 +143,7 @@ export interface ExecutionInput {
   testId: number;
   actualStatus: number;
   actualBody: string;
+  actualRequestBody: string;
   passed: boolean;
   failureMessage: string;
   ranAt: number;
@@ -147,8 +152,8 @@ export interface ExecutionInput {
 
 export function insertExecution(input: ExecutionInput): void {
   db.prepare(`
-    INSERT INTO executions (test_id, actual_status, actual_body, passed, failure_message, ran_at, duration_ms)
-    VALUES (@testId, @actualStatus, @actualBody, @passed, @failureMessage, @ranAt, @durationMs)
+    INSERT INTO executions (test_id, actual_status, actual_body, actual_request_body, passed, failure_message, ran_at, duration_ms)
+    VALUES (@testId, @actualStatus, @actualBody, @actualRequestBody, @passed, @failureMessage, @ranAt, @durationMs)
   `).run({ ...input, passed: input.passed ? 1 : 0 });
 }
 
