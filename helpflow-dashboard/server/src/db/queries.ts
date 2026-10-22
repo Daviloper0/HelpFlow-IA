@@ -12,6 +12,8 @@ export interface TestRow {
   expected_status: number;
   expected_body: string;
   category: string;
+  capture_path: string;
+  capture_as: string;
   created_at: number;
   // Joined from executions (nullable when no run exists)
   last_actual_status: number | null;
@@ -32,6 +34,8 @@ export interface ApiTestJson {
   expectedStatus: number;
   expectedBody: string;
   category: string;
+  capturePath: string;
+  captureAs: string;
   lastRun?: {
     actualStatus: number;
     actualBody: string;
@@ -53,6 +57,8 @@ function rowToJson(row: TestRow): ApiTestJson {
     expectedStatus: row.expected_status,
     expectedBody: row.expected_body,
     category: row.category,
+    capturePath: row.capture_path,
+    captureAs: row.capture_as,
   };
 
   if (row.last_ran_at !== null && row.last_actual_status !== null) {
@@ -89,8 +95,11 @@ const LIST_TESTS_SQL = `
   ORDER BY t.id DESC
 `;
 
-export function listTests(): ApiTestJson[] {
-  return (db.prepare(LIST_TESTS_SQL).all() as TestRow[]).map(rowToJson);
+export function listTests(opts: { order?: 'asc' | 'desc' } = {}): ApiTestJson[] {
+  const sql = opts.order === 'asc'
+    ? LIST_TESTS_SQL.replace('ORDER BY t.id DESC', 'ORDER BY t.id ASC')
+    : LIST_TESTS_SQL;
+  return (db.prepare(sql).all() as TestRow[]).map(rowToJson);
 }
 
 export function getTestById(id: number): ApiTestJson | undefined {

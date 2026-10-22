@@ -73,6 +73,9 @@ function compareJson(
 }
 
 function deepEqual(a: unknown, b: unknown): boolean {
+  // "{{any}}" in the expected (b) side matches any actual value
+  if (b === '{{any}}') return true;
+
   if (a === b) return true;
   if (a === null || b === null) return false;
   if (typeof a !== 'object' || typeof b !== 'object') return false;

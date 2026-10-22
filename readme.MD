@@ -314,6 +314,52 @@ The test MUST only pass when the bodies are equal. If the test doesn't expect a 
 Now that the test suit is WORKING, let's fix the register valid user test. The problem with it is that it can't create the same user twice. To fix that, add a timestamp to the email, so that it's never the same.
 
 Don't show the template, show the actual request that is being sent to the server. It's working now.
+
+The following tests are failing. To fix them, change the expected body as I say:
+
+* Criar ticket válido: The server expects an object, like the following:
+{"assignedTo":null,"category":"Printer","createdBy":"7f856fb4-88f9-4788-8097-61bcf463509a","description":"A impressora do 3º andar parou de imprimir","id":18,"priority":"High","status":"Open","title":"Impressora não funciona"}
+
+* Rejeitar createdBy inválido no ticket: The server expects an error message:
+Error in $: Invalid userId
+
+* Rejeitar priority inválida no ticket: The server expects an error message:
+Error in $.priority: Invalid priority
+
+* Categoria desconhecida cai em Other: The server expects:
+{"assignedTo":null,"category":"Other","createdBy":"7f856fb4-88f9-4788-8097-61bcf463509a","description":"Desc","id":17,"priority":"Low","status":"Open","title":"Problema"}
+
+There are a couple of problems with my approach of being exactly the same object. Especially because of the ID, as it is incremental, it will never be the same. Perhaps verify every item of the object, except for the ID. If you think another approach is better, than ask me.
+
+Para o backend:
+
+There is a problem, if a invalid userId is sent or a invalid priority is sent, then there is no JSON response, the error sent is Error in $.priority: Invalid priority
+or the userId equivalent. But there is no JSON response for those. Add an error code for those results.
+
+First, remove what you've done in the main.hs file. DO NOT WRITE IN THE MAIN.HS.
+
+Second, the thing is that in the line 46 of the file CreateTicket.hs, if it can't create the ticket because of how the userId is created (Defined in the line 19 of the UserId.hs file in Domain/Identity). It expects a UUID as a text, but if a normal Text is given, then it can't create the User ID and the program gives a fail message (Invalid userId). But the thing is that I don't want that kind of message, I want a message just like in assignTicket, line 22:32.
+
+Now, there is another problem with the tests, most use a ticket that was already asigned, the problem with that approach is that it doesn't give the expected error, instead, the system returns:
+
+{"errorCode":"TICKET_NOT_AVAILABLE","errorMessage":"Ticket is not available, maybe it doesn't exist or it's already assigned"}
+
+So, on the ticket tests there should be a non assigned ticket. So, before testing that, create a ticket, try to do all the tests that must be rejected and after that, try to do assign to a valid technician.,
+
+For the createdBy, it's working ok, but that change broke the reject invalid priority test. Add the InvalidPriority error.
+
+De volta aqui:
+Now, change the following tests:
+"Rejeitar priority inválida no ticket" to expect:
+{"errorCode":"INVALID_PRIORITY","errorMessage":"Invalid priority, valid values are: Low, Normal, High"}
+
+and 
+
+"Rejeitar createdBy inválido no ticket" to expect {"errorCode":"INVALID_USER_ID","errorMessage":"Invalid userId"}
+
+
+
+
 # Como rodar:
 Dentro de helpflow-dashboard, rodar:
 * npm run dev (rodar frontend)

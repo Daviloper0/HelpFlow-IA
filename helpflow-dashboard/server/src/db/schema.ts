@@ -41,10 +41,18 @@ db.exec(`
     ON executions(test_id, ran_at DESC);
 `);
 
-// Migration: add actual_request_body to executions if not present
-const cols = (db.pragma('table_info(executions)') as { name: string }[]).map((c) => c.name);
-if (!cols.includes('actual_request_body')) {
+// Migrations
+const execCols = (db.pragma('table_info(executions)') as { name: string }[]).map((c) => c.name);
+if (!execCols.includes('actual_request_body')) {
   db.exec(`ALTER TABLE executions ADD COLUMN actual_request_body TEXT NOT NULL DEFAULT ''`);
+}
+
+const testCols = (db.pragma('table_info(tests)') as { name: string }[]).map((c) => c.name);
+if (!testCols.includes('capture_path')) {
+  db.exec(`ALTER TABLE tests ADD COLUMN capture_path TEXT NOT NULL DEFAULT ''`);
+}
+if (!testCols.includes('capture_as')) {
+  db.exec(`ALTER TABLE tests ADD COLUMN capture_as TEXT NOT NULL DEFAULT ''`);
 }
 
 db.exec(`

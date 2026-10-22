@@ -4,8 +4,25 @@ import { getTestById, insertExecution, listTests } from '../db/queries';
 import { executeRequest } from '../lib/executor';
 import { validate } from '../lib/validator';
 
-function interpolate(body: string): string {
-  return body.replace(/\{\{timestamp\}\}/g, Date.now().toString());
+type Context = Record<string, string>;
+
+function interpolate(text: string, context: Context = {}): string {
+  return text
+    .replace(/\{\{timestamp\}\}/g, Date.now().toString())
+    .replace(/\{\{(\w+)\}\}/g, (_, key) => context[key] ?? `{{${key}}}`);
+}
+
+/** Extracts a top-level field from a JSON string. e.g. "$.id" → the id value as string. */
+function capture(json: string, path: string): string | undefined {
+  const match = path.match(/^\$\.(\w+)$/);
+  if (!match) return undefined;
+  try {
+    const parsed = JSON.parse(json) as Record<string, unknown>;
+    const val = parsed[match[1]];
+    return val !== undefined ? String(val) : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 export const runnerRouter = Router();
@@ -64,14 +81,16 @@ runnerRouter.post('/:id/run', async (req, res) => {
  * A failing test does not stop the suite.
  */
 runnerRouter.post('/run-all', async (_req, res) => {
-  const tests = listTests();
+  const tests = listTests({ order: 'asc' });
 
+  const context: Context = {};
   const results = [];
   for (const test of tests) {
-    const actualRequestBody = interpolate(test.requestBody);
+    const actualRequestBody = interpolate(test.requestBody, context);
+    const route = interpolate(test.route, context);
     const result = await executeRequest(
       test.method,
-      test.route,
+      route,
       actualRequestBody,
       config.helpflowBaseUrl,
       config.requestTimeoutMs,
@@ -97,6 +116,11 @@ runnerRouter.post('/run-all', async (_req, res) => {
       ranAt,
       durationMs: result.durationMs,
     });
+
+    if (test.capturePath && test.captureAs) {
+      const captured = capture(result.actualBody, test.capturePath);
+      if (captured !== undefined) context[test.captureAs] = captured;
+    }
 
     results.push({
       testId: test.id,

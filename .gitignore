@@ -1,3 +1,4 @@
 helpflow-backend/
 helpflow-dashboard/node_modules/*
 helpflow-dashboard/server/node_modules/*
+helpflow-dashbaord/server/data/

@@ -9,6 +9,7 @@ import type { TestView } from '../../types';
 import styles from './FailureDetailModal.module.css';
 
 function deepEqual(a: unknown, b: unknown): boolean {
+  if (b === '{{any}}') return true;
   if (a === b) return true;
   if (a === null || b === null) return false;
   if (typeof a !== 'object' || typeof b !== 'object') return false;
