@@ -357,8 +357,42 @@ and
 
 "Rejeitar createdBy inválido no ticket" to expect {"errorCode":"INVALID_USER_ID","errorMessage":"Invalid userId"}
 
+There is a problem with the "Promover Customer a técnico com sucesso", you can't promote a customer twice
 
+Haskell: 
+Now, create a demoteToUser in Application/Identity and on src/API. the PromoteToTechnician.hs in identity, should recieve an User -> User -> Io (Either DemoteError User). The promote error data type should have the following: NotAdministrator, UserNotFound and AlreadyUser.
 
+In the API, demoteToUserHandler should be UserId -> User Id -> Handler RegisterResponse.
+
+Do not import anything else, except if explicitly allowed.
+
+Backend do frontend:
+Now, the "Promover Customer a técnico com sucesso" test is failing, because the user is already a technician. To fix that, use a valid user id, perhaps the one you already created in the tests. If you can't gather one, then tell me. 
+
+Haskell:
+Now, when a user is created, the server should also return the user id, so it can be used on the application.
+
+If you change something in the RegisterResponse, just remember that other files that are not part of the register, such as promote and demote also use them. Perhaps there is more, so check it. There is no problem with also returning the ID in both promote or demote, just don't forget to do the necessary changes after doing it.
+
+Frontend
+I've done the changes in the backend, now, the registerRequest also returns the ID. So, after creating the user, you can use it. An example of how the server will answer is:
+
+{"responseMessage":"Usuário registrado com sucesso","responseUserId":"1f1a76b3-e854-488b-8cc7-59dc2a6905e5"}
+
+Now retry to do the promoteToTechnician test, and also, change what the valid register test is expected to recieve, using the JSON before this paragraph. Remember that IDs change all the time, so it shouldn't be fixed to one ID
+
+The login test should also be updated, as it also returns a loginUserId, for example: {"loginMessage":"Login realizado com sucesso","loginUserId":"4b53bd08-d1c8-4c00-813e-e336397bd050"}
+
+Both login and register tests are working back again. But the promote Customor to technician test is not working, the server is returning Invalid UserId. Fix that error.
+
+Again, the server is still returning invalid userId. Retry
+
+backend:
+When the server recieves an invalid ticketId, it returns only Invalid ticketId, not a JSON, like it should. Add an error like INVALID_TICKET_ID to the tickets.
+
+Analyze how the AssignTicket is working when it recieves an UUID from the Front end, you should do the same for the PromoteToTechnician and in the ticket assignment (here it's called technicianId, but it is still a uuid)
+
+Nothing is printed on the console. And the user Id is still invalid, but don't work on that yet, just remember that the problem is still not solved. The "Rejeitar ticketId não numérico na atribuição" should expect {"errorCode":"INVALID_TICKET_ID","errorMessage":"Invalid ticketId"} and "Rejeitar ticketId não numérico na solução" should also expect the same.
 
 # Como rodar:
 Dentro de helpflow-dashboard, rodar:

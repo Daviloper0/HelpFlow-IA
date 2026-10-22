@@ -119,7 +119,15 @@ runnerRouter.post('/run-all', async (_req, res) => {
 
     if (test.capturePath && test.captureAs) {
       const captured = capture(result.actualBody, test.capturePath);
-      if (captured !== undefined) context[test.captureAs] = captured;
+      if (captured !== undefined) {
+        context[test.captureAs] = captured;
+        console.log(`[capture] ${test.captureAs} = ${captured}`);
+      } else {
+        console.log(`[capture] FAILED for "${test.name}": path=${test.capturePath} body=${result.actualBody.slice(0, 100)}`);
+      }
+    }
+    if (route.includes('{{')) {
+      console.log(`[interpolate] UNRESOLVED placeholders in route: ${route}`);
     }
 
     results.push({
