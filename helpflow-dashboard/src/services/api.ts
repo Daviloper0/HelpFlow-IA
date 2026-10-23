@@ -54,6 +54,28 @@ export function runTest(test: ApiTest): Promise<TestRun> {
   return request(`/api/tests/${test.id}/run`, { method: 'POST' });
 }
 
+export async function runAll(
+  onResult: (result: { testId: number } & TestRun) => void,
+): Promise<void> {
+  const res = await fetch('/api/tests/run-all', { method: 'POST' });
+  if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() ?? '';
+    for (const line of lines) {
+      if (line.trim()) onResult(JSON.parse(line) as { testId: number } & TestRun);
+    }
+  }
+}
+
 // ---- Documentação OpenAPI ----
 
 export function listDocRoutes(): Promise<DocRoute[]> {

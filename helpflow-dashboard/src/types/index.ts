@@ -17,6 +17,8 @@ export interface TestRun {
   actualBody: string;
   /** Corpo da requisição enviada, com placeholders já substituídos. */
   actualRequestBody: string;
+  /** Rota usada na requisição, com placeholders já substituídos. */
+  actualRoute: string;
   /** Momento da execução, em milissegundos (Date.now). */
   at: number;
   /** Determinado pelo backend com base no status e no body esperados. */

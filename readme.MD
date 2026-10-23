@@ -394,6 +394,18 @@ Analyze how the AssignTicket is working when it recieves an UUID from the Front 
 
 Nothing is printed on the console. And the user Id is still invalid, but don't work on that yet, just remember that the problem is still not solved. The "Rejeitar ticketId não numérico na atribuição" should expect {"errorCode":"INVALID_TICKET_ID","errorMessage":"Invalid ticketId"} and "Rejeitar ticketId não numérico na solução" should also expect the same.
 
+Front End:
+The following tests are failing, understand why.
+
+For every test that involves a ticket, I want to see what is the real ticket id, not only a place holder. But just for debugging. What you've done didn't help at all
+
+It works now, but it shouldn't only be a single call, you have to run firstly the required tests, such as valid register, login, create ticket, and all the other ones, should be run after, in multiple calls, so that the number increases second by second. Ask me, if in any doubts
+
+Don't do that, you can keep it simple, just run the importants first and then the rest. Say your approach and ask for permission to continue.
+
+Now, finally, change the "Promover Customer a técnico com sucesso" expected request to {"responseMessage":"User is now a technician","responseUserId":"{{userId}}"}
+
+
 # Como rodar:
 Dentro de helpflow-dashboard, rodar:
 * npm run dev (rodar frontend)

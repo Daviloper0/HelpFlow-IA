@@ -36,9 +36,10 @@ runnerRouter.post('/:id/run', async (req, res) => {
   if (!test) return res.status(404).json({ error: 'Test not found' });
 
   const actualRequestBody = interpolate(test.requestBody);
+  const actualRoute = test.route;
   const result = await executeRequest(
     test.method,
-    test.route,
+    actualRoute,
     actualRequestBody,
     config.helpflowBaseUrl,
     config.requestTimeoutMs,
@@ -59,6 +60,7 @@ runnerRouter.post('/:id/run', async (req, res) => {
     actualStatus: result.actualStatus,
     actualBody: result.actualBody,
     actualRequestBody,
+    actualRoute,
     passed,
     failureMessage,
     ranAt,
@@ -69,6 +71,7 @@ runnerRouter.post('/:id/run', async (req, res) => {
     actualStatus: result.actualStatus,
     actualBody: result.actualBody,
     actualRequestBody,
+    actualRoute,
     at: ranAt,
     passed,
     failureMessage,
@@ -81,16 +84,19 @@ runnerRouter.post('/:id/run', async (req, res) => {
  * A failing test does not stop the suite.
  */
 runnerRouter.post('/run-all', async (_req, res) => {
-  const tests = listTests({ order: 'asc' });
+  res.setHeader('Content-Type', 'application/x-ndjson');
+  res.setHeader('Transfer-Encoding', 'chunked');
+  res.flushHeaders();
 
+  const tests = listTests({ order: 'asc' });
   const context: Context = {};
-  const results = [];
+
   for (const test of tests) {
     const actualRequestBody = interpolate(test.requestBody, context);
-    const route = interpolate(test.route, context);
+    const actualRoute = interpolate(test.route, context);
     const result = await executeRequest(
       test.method,
-      route,
+      actualRoute,
       actualRequestBody,
       config.helpflowBaseUrl,
       config.requestTimeoutMs,
@@ -111,6 +117,7 @@ runnerRouter.post('/run-all', async (_req, res) => {
       actualStatus: result.actualStatus,
       actualBody: result.actualBody,
       actualRequestBody,
+      actualRoute,
       passed,
       failureMessage,
       ranAt,
@@ -119,27 +126,20 @@ runnerRouter.post('/run-all', async (_req, res) => {
 
     if (test.capturePath && test.captureAs) {
       const captured = capture(result.actualBody, test.capturePath);
-      if (captured !== undefined) {
-        context[test.captureAs] = captured;
-        console.log(`[capture] ${test.captureAs} = ${captured}`);
-      } else {
-        console.log(`[capture] FAILED for "${test.name}": path=${test.capturePath} body=${result.actualBody.slice(0, 100)}`);
-      }
-    }
-    if (route.includes('{{')) {
-      console.log(`[interpolate] UNRESOLVED placeholders in route: ${route}`);
+      if (captured !== undefined) context[test.captureAs] = captured;
     }
 
-    results.push({
+    res.write(JSON.stringify({
       testId: test.id,
       actualStatus: result.actualStatus,
       actualBody: result.actualBody,
       actualRequestBody,
+      actualRoute,
       at: ranAt,
       passed,
       failureMessage,
-    });
+    }) + '\n');
   }
 
-  return res.json(results);
+  res.end();
 });

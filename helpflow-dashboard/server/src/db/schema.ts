@@ -46,6 +46,9 @@ const execCols = (db.pragma('table_info(executions)') as { name: string }[]).map
 if (!execCols.includes('actual_request_body')) {
   db.exec(`ALTER TABLE executions ADD COLUMN actual_request_body TEXT NOT NULL DEFAULT ''`);
 }
+if (!execCols.includes('actual_route')) {
+  db.exec(`ALTER TABLE executions ADD COLUMN actual_route TEXT NOT NULL DEFAULT ''`);
+}
 
 const testCols = (db.pragma('table_info(tests)') as { name: string }[]).map((c) => c.name);
 if (!testCols.includes('capture_path')) {
@@ -53,6 +56,11 @@ if (!testCols.includes('capture_path')) {
 }
 if (!testCols.includes('capture_as')) {
   db.exec(`ALTER TABLE tests ADD COLUMN capture_as TEXT NOT NULL DEFAULT ''`);
+}
+if (!testCols.includes('sort_order')) {
+  db.exec(`ALTER TABLE tests ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0`);
+  // Seed existing rows: sort_order = id * 10 (leaves room for intermediate values)
+  db.exec(`UPDATE tests SET sort_order = id * 10 WHERE sort_order = 0`);
 }
 
 db.exec(`

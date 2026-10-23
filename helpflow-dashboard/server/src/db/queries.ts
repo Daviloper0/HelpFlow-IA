@@ -19,6 +19,7 @@ export interface TestRow {
   last_actual_status: number | null;
   last_actual_body: string | null;
   last_actual_request_body: string | null;
+  last_actual_route: string | null;
   last_ran_at: number | null;
   last_passed: number | null;
   last_failure_message: string | null;
@@ -40,6 +41,7 @@ export interface ApiTestJson {
     actualStatus: number;
     actualBody: string;
     actualRequestBody: string;
+    actualRoute: string;
     at: number;
     passed: boolean;
     failureMessage: string;
@@ -66,6 +68,7 @@ function rowToJson(row: TestRow): ApiTestJson {
       actualStatus: row.last_actual_status,
       actualBody: row.last_actual_body ?? '',
       actualRequestBody: row.last_actual_request_body ?? '',
+      actualRoute: row.last_actual_route ?? '',
       at: row.last_ran_at,
       passed: row.last_passed === 1,
       failureMessage: row.last_failure_message ?? '',
@@ -81,6 +84,7 @@ const LIST_TESTS_SQL = `
     e.actual_status        AS last_actual_status,
     e.actual_body          AS last_actual_body,
     e.actual_request_body  AS last_actual_request_body,
+    e.actual_route         AS last_actual_route,
     e.ran_at               AS last_ran_at,
     e.passed         AS last_passed,
     e.failure_message AS last_failure_message
@@ -97,7 +101,7 @@ const LIST_TESTS_SQL = `
 
 export function listTests(opts: { order?: 'asc' | 'desc' } = {}): ApiTestJson[] {
   const sql = opts.order === 'asc'
-    ? LIST_TESTS_SQL.replace('ORDER BY t.id DESC', 'ORDER BY t.id ASC')
+    ? LIST_TESTS_SQL.replace('ORDER BY t.id DESC', 'ORDER BY t.sort_order ASC')
     : LIST_TESTS_SQL;
   return (db.prepare(sql).all() as TestRow[]).map(rowToJson);
 }
@@ -153,6 +157,7 @@ export interface ExecutionInput {
   actualStatus: number;
   actualBody: string;
   actualRequestBody: string;
+  actualRoute: string;
   passed: boolean;
   failureMessage: string;
   ranAt: number;
@@ -161,8 +166,8 @@ export interface ExecutionInput {
 
 export function insertExecution(input: ExecutionInput): void {
   db.prepare(`
-    INSERT INTO executions (test_id, actual_status, actual_body, actual_request_body, passed, failure_message, ran_at, duration_ms)
-    VALUES (@testId, @actualStatus, @actualBody, @actualRequestBody, @passed, @failureMessage, @ranAt, @durationMs)
+    INSERT INTO executions (test_id, actual_status, actual_body, actual_request_body, actual_route, passed, failure_message, ran_at, duration_ms)
+    VALUES (@testId, @actualStatus, @actualBody, @actualRequestBody, @actualRoute, @passed, @failureMessage, @ranAt, @durationMs)
   `).run({ ...input, passed: input.passed ? 1 : 0 });
 }
 

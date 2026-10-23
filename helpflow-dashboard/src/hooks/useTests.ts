@@ -2,10 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as api from '../services/api';
 import type { ApiTest, ApiTestInput } from '../types';
 import { toTestView } from '../utils/testStatus';
-import { sleep } from '../utils/sleep';
-
-/** Intervalo entre o início de cada teste ao usar "Rodar todos". */
-const RUN_ALL_STAGGER_MS = 320;
 
 function withId(ids: ReadonlySet<number>, id: number, present: boolean): ReadonlySet<number> {
   const next = new Set(ids);
@@ -51,11 +47,20 @@ export function useTests() {
     }
   }, []);
 
-  const runAll = useCallback(() => {
-    testsRef.current.forEach((test, index) => {
-      void runTest(test.id, index * RUN_ALL_STAGGER_MS);
-    });
-  }, [runTest]);
+  const runAll = useCallback(async () => {
+    setRunningIds(new Set(testsRef.current.map((t) => t.id)));
+    try {
+      await api.runAll((result) => {
+        const { testId, ...run } = result;
+        setRunningIds((ids) => withId(ids, testId, false));
+        setTests((list) =>
+          list.map((item) => (item.id === testId ? { ...item, lastRun: run } : item)),
+        );
+      });
+    } finally {
+      setRunningIds(new Set());
+    }
+  }, []);
 
   /** Cria um teste novo, ou atualiza o existente quando recebe o id. */
   const saveTest = useCallback(async (input: ApiTestInput, id?: number) => {
