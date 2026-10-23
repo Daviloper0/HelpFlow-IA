@@ -1,6 +1,6 @@
 import type { OpenApiStatus, OpenApiValidation, StatusCounts } from '../types';
 
-export type SummaryTone = 'bad' | 'info' | 'good';
+export type SummaryTone = 'bad' | 'info' | 'good' | 'warn';
 
 export interface Summary {
   text: string;
@@ -41,9 +41,14 @@ export function buildSummary(counts: StatusCounts, openApi: OpenApiStatus | null
     text += ' ' + (openApi.exists ? OPENAPI_SENTENCES[openApi.validation] : 'A documentação OpenAPI não foi encontrada.');
   }
 
+  const allPassed = counts.fail === 0 && counts.idle === 0 && counts.total > 0;
+  const docsValid = openApi?.exists && openApi.validation === 'valid';
+
   let tone: SummaryTone = 'good';
-  if (counts.fail > 0) tone = 'bad';
+  if (docsValid && counts.fail > 0) tone = 'warn';
+  else if (counts.fail > 0) tone = 'bad';
   else if (counts.idle > 0 || counts.total === 0) tone = 'info';
+  else if (allPassed && (!openApi || !openApi.exists)) tone = 'warn';
 
   return { text, tone };
 }

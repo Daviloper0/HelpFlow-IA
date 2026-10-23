@@ -405,6 +405,8 @@ Don't do that, you can keep it simple, just run the importants first and then th
 
 Now, finally, change the "Promover Customer a técnico com sucesso" expected request to {"responseMessage":"User is now a technician","responseUserId":"{{userId}}"}
 
+Change the background color of the system resume for yellow, when either (the test passes and the API docs aren't available) or (The docs exists and is validated, but there are tests that do not pass)
+
 
 # Como rodar:
 Dentro de helpflow-dashboard, rodar:
