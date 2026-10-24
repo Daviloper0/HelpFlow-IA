@@ -17,13 +17,33 @@ interface DocsPageProps {
   onDeleteRoute: (id: number) => Promise<void>;
 }
 
+interface RouteGroup {
+  key: string; // "METHOD:route"
+  successCandidates: ApiTest[];
+  errorTests: ApiTest[];
+}
+
+function buildInputFromGroup(winner: ApiTest, errorTests: ApiTest[]): DocRouteInput {
+  return {
+    method: winner.method,
+    route: winner.route,
+    title: winner.name,
+    description: '',
+    requestBody: winner.requestBody,
+    successStatus: winner.expectedStatus,
+    successBody: winner.expectedBody,
+    errors: errorTests.map((t) => ({ status: t.expectedStatus, body: t.expectedBody })),
+  };
+}
+
 function buildPrompt(created: DocRouteInput[]): string {
   const lines: string[] = [
     'Você é um especialista em APIs REST. As rotas abaixo foram geradas automaticamente a partir de testes de API do projeto HelpFlow (backend Haskell/Servant).',
     'Para cada rota, faça o seguinte:',
     '1. Escreva uma descrição clara e objetiva do que a rota faz.',
-    '2. Adicione casos de erro que o backend realmente retorna mas que não estão cobertos pelos testes (ex.: autenticação, permissão, conflito, recurso não encontrado). Não invente erros que não existem no backend.',
-    '3. Não altere os campos já preenchidos (método, rota, status de sucesso, corpo de sucesso, corpo da requisição).',
+    '2. IMPORTANTE: alguns testes de casos extremos (edge cases) foram descartados durante a geração. Esses cenários DEVEM ser mencionados na descrição da rota, mesmo que não apareçam como erros listados.',
+    '3. Adicione casos de erro que o backend realmente retorna mas que não estão cobertos pelos testes (ex.: autenticação, permissão, conflito, recurso não encontrado). Não invente erros que não existem no backend.',
+    '4. Não altere os campos já preenchidos (método, rota, status de sucesso, corpo de sucesso, corpo da requisição).',
     '',
     'Rotas criadas:',
     '',
@@ -44,8 +64,55 @@ function buildPrompt(created: DocRouteInput[]): string {
   return lines.join('\n');
 }
 
+function CompareCandidate({ test, selected, onSelect }: {
+  test: ApiTest;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className={`${styles.candidate} ${selected ? styles.candidateSelected : ''}`}>
+      <div className={styles.candidateHeader}>
+        <input
+          type="radio"
+          checked={selected}
+          onChange={onSelect}
+          className={styles.candidateRadio}
+        />
+        <button className={styles.candidateToggle} onClick={() => setOpen((o) => !o)}>
+          <span className={styles.candidateName}>{test.name}</span>
+          <span className={styles.candidateChevron}>{open ? '▲' : '▼'}</span>
+        </button>
+      </div>
+      {open && (
+        <div className={styles.candidateBody}>
+          {test.requestBody && (
+            <div className={styles.candidateField}>
+              <span className={styles.candidateLabel}>Corpo da requisição</span>
+              <pre className={styles.candidatePre}>{test.requestBody}</pre>
+            </div>
+          )}
+          {test.expectedBody && (
+            <div className={styles.candidateField}>
+              <span className={styles.candidateLabel}>Corpo esperado</span>
+              <pre className={styles.candidatePre}>{test.expectedBody}</pre>
+            </div>
+          )}
+          {test.description && (
+            <div className={styles.candidateField}>
+              <span className={styles.candidateLabel}>Descrição do teste</span>
+              <span>{test.description}</span>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 type Modal =
   | { kind: 'allDone' }
+  | { kind: 'compare'; groups: RouteGroup[]; selections: Record<string, number>; pendingSingle: DocRouteInput[] }
   | { kind: 'prompt'; prompt: string; copied: boolean };
 
 /** Módulo "Documentação OpenAPI": lista das rotas, cada uma em um card que abre e fecha. */
@@ -74,34 +141,59 @@ export function DocsPage({ routes, tests, loading, onAddRoute, onUpdateRoute, on
     if (openId === id) setOpenId(null);
   }
 
+  async function createAndShowPrompt(inputs: DocRouteInput[]) {
+    setGenerating(true);
+    for (const input of inputs) await onAddRoute(input);
+    setGenerating(false);
+    setModal({ kind: 'prompt', prompt: buildPrompt(inputs), copied: false });
+  }
+
   async function handleGenerate() {
     const docKeys = new Set(routes.map((r) => `${r.method}:${r.route}`));
-    const missing = tests.filter((t) => !docKeys.has(`${t.method}:${t.route}`));
 
-    if (missing.length === 0) {
+    // Group tests by method+route, only for routes not yet documented
+    const groupMap = new Map<string, RouteGroup>();
+    for (const t of tests) {
+      const key = `${t.method}:${t.route}`;
+      if (docKeys.has(key)) continue;
+      if (!groupMap.has(key)) groupMap.set(key, { key, successCandidates: [], errorTests: [] });
+      const g = groupMap.get(key)!;
+      if (t.category === 'success') g.successCandidates.push(t);
+      else g.errorTests.push(t);
+    }
+
+    // Only keep groups that have at least one success candidate
+    const groups = [...groupMap.values()].filter((g) => g.successCandidates.length > 0);
+
+    if (groups.length === 0) {
       setModal({ kind: 'allDone' });
       return;
     }
 
-    setGenerating(true);
-    const inputs: DocRouteInput[] = missing.map((t) => ({
-      method: t.method,
-      route: t.route,
-      title: t.name,
-      requestBody: t.requestBody,
-      successStatus: t.category === 'success' ? t.expectedStatus : 200,
-      successBody: t.category === 'success' ? t.expectedBody : '',
-      errors: t.category !== 'success'
-        ? [{ status: t.expectedStatus, body: t.expectedBody }]
-        : [],
-    }));
+    const needsComparison = groups.filter((g) => g.successCandidates.length > 1);
+    const singleGroups = groups.filter((g) => g.successCandidates.length === 1);
+    const pendingSingle = singleGroups.map((g) => buildInputFromGroup(g.successCandidates[0], g.errorTests));
 
-    for (const input of inputs) {
-      await onAddRoute(input);
+    if (needsComparison.length > 0) {
+      setModal({ kind: 'compare', groups: needsComparison, selections: {}, pendingSingle });
+      return;
     }
 
-    setGenerating(false);
-    setModal({ kind: 'prompt', prompt: buildPrompt(inputs), copied: false });
+    await createAndShowPrompt(pendingSingle);
+  }
+
+  async function handleConfirmCompare() {
+    if (modal?.kind !== 'compare') return;
+    const allComplete = modal.groups.every((g) => modal.selections[g.key] !== undefined);
+    if (!allComplete) return;
+
+    const fromComparison = modal.groups.map((g) => {
+      const winner = g.successCandidates[modal.selections[g.key]];
+      return buildInputFromGroup(winner, g.errorTests);
+    });
+
+    setModal(null);
+    await createAndShowPrompt([...modal.pendingSingle, ...fromComparison]);
   }
 
   return (
@@ -155,6 +247,49 @@ export function DocsPage({ routes, tests, loading, onAddRoute, onUpdateRoute, on
       {adding && <RouteFormModal onClose={() => setAdding(false)} onSubmit={handleAdd} />}
       {editing && <RouteFormModal onClose={() => setEditing(null)} onSubmit={handleEdit} initialRoute={editing} />}
 
+      {modal?.kind === 'compare' && (
+        <div className={styles.overlay}>
+          <div className={styles.compareDialog}>
+            <h2 className={styles.compareTitle}>Selecione o teste principal de cada rota</h2>
+            <p className={styles.compareSubtitle}>
+              Algumas rotas têm mais de um teste de sucesso. Escolha qual representa o caso geral.
+              Os demais serão descartados, mas o prompt gerado irá instruir a IA a cobri-los na descrição da rota.
+            </p>
+            <div className={styles.compareGroups}>
+              {modal.groups.map((g) => (
+                <div key={g.key} className={styles.compareGroup}>
+                  <p className={styles.compareGroupTitle}>{g.key.replace(':', ' ')}</p>
+                  {g.successCandidates.map((t, idx) => {
+                    const selected = modal.selections[g.key] === idx;
+                    return (
+                      <CompareCandidate
+                        key={t.id}
+                        test={t}
+                        selected={selected}
+                        onSelect={() => setModal({
+                          ...modal,
+                          selections: { ...modal.selections, [g.key]: idx },
+                        })}
+                      />
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+            <div className={styles.dialogActions}>
+              <Button
+                variant="primary"
+                disabled={!modal.groups.every((g) => modal.selections[g.key] !== undefined)}
+                onClick={handleConfirmCompare}
+              >
+                Confirmar seleções
+              </Button>
+              <Button variant="secondary" onClick={() => setModal(null)}>Cancelar</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {modal?.kind === 'allDone' && (
         <div className={styles.overlay}>
           <div className={styles.dialog}>
@@ -166,22 +301,25 @@ export function DocsPage({ routes, tests, loading, onAddRoute, onUpdateRoute, on
 
       {modal?.kind === 'prompt' && (
         <div className={styles.overlay}>
-          <div className={styles.dialog}>
-            <p className={styles.dialogText}>
-              Rotas criadas com sucesso. Deseja copiar o prompt para o assistente de IA preencher as descrições e erros adicionais?
-            </p>
-            <div className={styles.dialogActions}>
-              <Button
-                variant="primary"
-                onClick={() => {
-                  navigator.clipboard.writeText(modal.prompt);
-                  setModal({ ...modal, copied: true });
-                }}
-              >
-                {modal.copied ? 'Copiado!' : 'Copiar prompt'}
-              </Button>
-              <Button variant="secondary" onClick={() => setModal(null)}>Fechar</Button>
+          <div className={styles.promptDialog}>
+            <div className={styles.promptHeader}>
+              <p className={styles.dialogText}>
+                Rotas criadas. Copie o prompt abaixo e cole em um assistente de IA para preencher as descrições e erros adicionais.
+              </p>
+              <div className={styles.dialogActions}>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    navigator.clipboard.writeText(modal.prompt);
+                    setModal({ ...modal, copied: true });
+                  }}
+                >
+                  {modal.copied ? 'Copiado!' : 'Copiar prompt'}
+                </Button>
+                <Button variant="secondary" onClick={() => setModal(null)}>Fechar</Button>
+              </div>
             </div>
+            <pre className={styles.promptPre}>{modal.prompt}</pre>
           </div>
         </div>
       )}

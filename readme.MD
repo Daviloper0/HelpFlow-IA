@@ -531,6 +531,45 @@ There should be a section title for description on the route, just like "Exemplo
 Now, notice how many of the routes aren't actually routes. Here is an idea of how it could work.
 
 When the user clicks the button to generate from tests, only the tests that generates a valid response, such as 200 should be treated as routes, and the possible errors sections should be all those other tests aren't a success. So for a post ticket there should be only one route. If there are multiple valid routes (multiple routes with 200 as response), then a window should open, to compare those. The comparison should show all the differences between them. Ask me questions about how a comparison could work to make sure you make a good comparison window.
+
+
+What counts as a "success" test? Is it category === 'success', or expectedStatus === 200, or both conditions must be true?
+
+What should the comparison show? The most obvious differences are requestBody and expectedBody (response). Should it also compare the test name/description, or only the request/response data?
+
+What does the user do in the comparison window? Options I can think of:
+
+Pick one test as the canonical route (the other gets discarded or becomes an error entry)
+Manually type a merged version on the spot
+Just see the diff and pick one — keeping it read-only
+What happens to the non-chosen test(s)? Should they become error entries on the route, or just be skipped entirely?
+
+More than 2 matches? Is it realistic to have 3+ success tests on the same route? If so, should the comparison show all of them at once, or is it always pairwise?
+I
+1. I think both, all tests that are success are also expectedStatus === 200, so it doesn't matter
+2. Show everything, because some tests are actually edge cases that should work, but aren't the expected general case. So it must be shown.
+3. Pick one test only
+4. The non-chosen tests should just be skipped, because they are there just to show what happens on edge cases. But on the prompt that will be shown to user, the system MUST be clear that edge cases should be also included in the end of the description
+5. If it is pairwise, how would you do it?
+
+Option A — Tournament (sequential): Show test A vs B, user picks one winner → show winner vs C → continue until one remains. Simple UI, but the user loses sight of earlier options as they go.
+
+Option B — All at once in columns: Show all N tests side by side (or stacked on mobile), each as a column with all its fields. The user picks one with a radio/select. They see everything at once and can compare freely without committing incrementally.
+
+I'd recommend Option B — it's more transparent and the user doesn't have to remember what they already saw. If there are 5+ matches the layout gets wide, but that's an edge case and a horizontal scroll is fine.
+
+Does that work for you?
+
+I think option B is better, but they don't need to be side by side, they can be hidden, and the user just see the details when they open them, just like the tests, or the routes, there is a resume, but how it works will only be shown when clicked. Any more questions?
+
+
+The expected status is not a necessary field in the comparison, we know it's valid.
+
+"Os demais serão ignorados, mas devem ser mencionados na descrição ao usar o prompt de IA."
+
+The "Devem ser mencionados na descrição ao usar o prompt de IA" was only a text for you to add in the prompt for the other AI, for the user a text like "Os outros usos serão sinalizados para que a IA adicione na descrição". Just rewrite what I've said to something that makes more sense
+
+The prompt should be shown to the user, so he knows what he is copying. Put the copy prompt on top of the window, and the prompt below it.
 # Como rodar:
 Dentro de helpflow-dashboard, rodar:
 * npm run dev (rodar frontend)
