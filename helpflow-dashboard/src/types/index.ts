@@ -1,6 +1,6 @@
 // Tipos compartilhados por todo o painel.
 
-export type View = 'analysis' | 'tests' | 'docs';
+export type View = 'analysis' | 'tests' | 'docs' | 'statistics';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -90,6 +90,57 @@ export interface OpenApiStatus {
   updatedAt: number | null;
   validation: OpenApiValidation;
   note: string;
+}
+
+// ---- Suite Runs ----
+
+export interface SuiteRunSpeedEntry {
+  testId: number;
+  name: string;
+  durationMs: number;
+}
+
+export interface SuiteRun {
+  id: number;
+  ranAt: number;
+  total: number;
+  passed: number;
+  failed: number;
+  durationMs: number;
+  hidden: boolean;
+  avgResponseMs: number;
+  fastest: SuiteRunSpeedEntry | null;
+  slowest: SuiteRunSpeedEntry | null;
+  regressions: number;
+  recoveries: number;
+  newFailures: number;
+}
+
+// ---- Global Statistics ----
+
+export interface PassRatePoint {
+  ranAt: number;
+  rate: number;
+}
+
+export interface RegressionEntry {
+  testId: number;
+  name: string;
+  failures: number;
+  lastFailedAt: number;
+}
+
+export interface GlobalStats {
+  totalRuns: number;
+  totalExecutions: number;
+  avgTestDurationMs: number;
+  slowestTest: { name: string; durationMs: number } | null;
+  allTimePassed: number;
+  allTimeFailed: number;
+  lastRunRate: number | null;
+  trend: 'up' | 'down' | 'flat' | null;
+  passRateOverTime: PassRatePoint[];
+  topRegressions: RegressionEntry[];
 }
 
 // ---- Formulários (os campos são sempre texto até a validação) ----

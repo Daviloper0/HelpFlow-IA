@@ -63,6 +63,25 @@ if (!testCols.includes('sort_order')) {
   db.exec(`UPDATE tests SET sort_order = id * 10 WHERE sort_order = 0`);
 }
 
+// suite_runs table
+db.exec(`
+  CREATE TABLE IF NOT EXISTS suite_runs (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    ran_at     INTEGER NOT NULL,
+    total      INTEGER NOT NULL DEFAULT 0,
+    passed     INTEGER NOT NULL DEFAULT 0,
+    failed     INTEGER NOT NULL DEFAULT 0,
+    duration_ms INTEGER NOT NULL DEFAULT 0,
+    hidden     INTEGER NOT NULL DEFAULT 0 CHECK(hidden IN (0,1))
+  );
+`);
+
+// Add suite_run_id to executions if not present
+const execColsV2 = (db.pragma('table_info(executions)') as { name: string }[]).map((c) => c.name);
+if (!execColsV2.includes('suite_run_id')) {
+  db.exec(`ALTER TABLE executions ADD COLUMN suite_run_id INTEGER REFERENCES suite_runs(id)`);
+}
+
 db.exec(`
 
   CREATE TABLE IF NOT EXISTS doc_routes (

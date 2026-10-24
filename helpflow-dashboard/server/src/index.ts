@@ -4,6 +4,7 @@ import { config } from './config';
 import './db/schema';
 import { docsRouter } from './routes/docs';
 import { runnerRouter } from './routes/runner';
+import { suiteRunsRouter } from './routes/suiteRuns';
 import { testsRouter } from './routes/tests';
 
 const app = express();
@@ -16,6 +17,7 @@ app.get('/health', (_req, res) => {
 
 app.use('/api/tests', testsRouter);
 app.use('/api/tests', runnerRouter);
+app.use('/api/suite-runs', suiteRunsRouter);
 app.use('/api', docsRouter);
 
 app.listen(config.port, () => {

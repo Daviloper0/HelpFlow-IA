@@ -406,8 +406,105 @@ Don't do that, you can keep it simple, just run the importants first and then th
 Now, finally, change the "Promover Customer a técnico com sucesso" expected request to {"responseMessage":"User is now a technician","responseUserId":"{{userId}}"}
 
 Change the background color of the system resume for yellow, when either (the test passes and the API docs aren't available) or (The docs exists and is validated, but there are tests that do not pass)
+# New Module: Statistics
+Now, there should be a new module called statistics, place it right below the "Analysis" module, on the left pannel, and give it a meaningful emoji too.
+
+In that Statistics module, there should be a table that gather all the run suits (not all individual tests, but only the run suits), and put it in a table. The table should display a maximum of 10 suits per once. The table must have the following columns: how many tests, how many failed and how many passed, if all tests failed and the test right before it didn't, then there should be a warning, that suggests that HelpFlow server could be offline, hence this is why it isn't passing any tests. The table should have alternating colors, and shouldn't change the background when a test pass or not. There should be a way to hide a test suit line from the table, and the consequences of doing so is that there will be graphs that measure how the tests are doing, and when it's turned off, the graphs will ignore that line in the statistics section. Give me suggestions about other columns that could be in a test suit table.
+
+The left pannel, that helps user navigate throughout the application should stay fixed, that means that when a user roll down the page, he should still be able to see the modules.
+
+The table must be a simplified mode, that shows the date, total, approved and fails, and the hide button. If the user wants more, there should be a button that opens a analysis window, with the amplified view. There shouldn't be a "Mostrar ocultas" button, as I said, it will still be shown on the table, just not on other things we will work on.
+
+In full mode it should show everything.
+
+First, the header text should be bold and it's background must be in a different color, perhaps the same as the left pannel. The total, approved and fails looks disaligned from it's content. On that table, I want to see a vertical bar that separates each column. It must be symetric, like a real spreadsheet. The Hide Show Button must have a "Esconder" to hide and a "Mostrar" text to show. When Hidden, it must be kinda of grayed out, but shouldn't be the same background color as the background. And choose other colors to alternate, but the text should have enough contrast to the green and red and common font color. The details section is ok.
+
+All columns and lines are aligned, except for date/time. Before fixing it, tell me why that happned
+
+It works great, now about the visibility button. It should have a fixed length and height. It shouldn't have any color on the background at all.
+
+Remove the "Oculta" label from the lines that are hidden, the color should be enough to tell it's hidden. Also, the "Ver detalhes" button should change the color to a more transparent one, kinda like the "Mostrar" button.
+
+Make the header blue, kinda like the F from helpflow #0070FD, and the alternating color, the one in the even row must be blue too, not a color of grey. But when it's hidden it should be gray anyways
+
+Ok, the helpflow Blue doesn't look good, change it to another color, that matches the soft blue tint better
+
+The text in the buttons when the row is hidden, should be the same as the text
+
+Now, there should be a "Histórico" Title, right before the table, and the table shouldn't use more than 50% of the statistics module, unless on mobile
+
+You can change the max width of the whole app. it looks good
+
+Why are you hardcoding a max-width? That doesn't make sense at all, just remove it.
+
+The histórico title could be bigger, perhaps the same size of "Testes que falharam na última execução" section title
+
+Now, I have some questions, I want to create some graphs, that give some statistics, like: How many tests were run (all time, except for hidden) a number, only, how many passed and how many failed, total duration, etc, based on all tests, and on the detailed statics they give.
+
+Questions: Besides the statistics inside the detailed section, are there more statistics that could be useful? 
+Second question: How could we organize all those statistics? So they use the page well
+
+I like the layout suggestion, I just want a mean of the mean duration of the tests, slowest test on the last ran test.
+
+The all time passed and all time failed could be in a donut chart, streak doesn't interest me. And what is total duration?
+
+The passrate over time is a percentage, right? But in a line chart? Because if I add more tests, then an absolute number won't work well.
+
+The donut could be on the KPI row, couldn't it? Give me reasons for it not to be in the KPI
+
+And what is the regressed tests section?
+
+It interests me. Any other important statistics that should be visible?
+
+I like the trend arrow, and the first time seen failing is also good, how would the layout be after those changes?
+
+Don't do the first seen failing yet. But start with the rest. Don't change anything in other modules, but if you need to, ask for permission.
+
+First, let's talk about the cards of the KPI, the numbers should be in center, and bigger, taking almost as much space as they can, but giving a small gap between the kpi title and the little explanation below it. 
+
+Now, the slowest test section isn't actually gathering the slowest test. The slowest test card should make it clear that it is the slowest test from the last ran suit, and don't make the test name cropped unless there is no space. No forced cut.
+
+Below 815px, the side pannel uses all the width for some reason, leaving no space for the rest of the modules, fix it. And also, for some reason, the donut chart appears. If it's in a phone sized window, then the modules should be on the bottom, fixed, like a mobile app. 
+
+On a small screen, don't show the "HelpFlow" or "Painel de desenvolvimento" text, nor the logo
+Why is the "Testes mais problematicos" table with it's size fixed? Make it use all the allowed width. And after 768px, the history table only takes like 50% of the width, even when it's not side by side with the "Taxa de aprovação" Graph. Change it, it should take the whole window. It should just start sharing space with the "Taxa de aprovação" graph when the window size is at least 1500px..
 
 
+The Taxa de aprovação graph is too big, it should be the same height as the history when widith > 1500px
+
+The "Taxa de aprovação" is still too big, it should grow at the same time as the history table. If something is not clear, ask me
+
+The history should have a maximum of 5 test suits, and the history should dictate the size of the row.
+
+I have a better idea, let's make the height of both fixed when the width is more than 1500px
+
+No, change the table to use 500px, 280px isn't enough at all.
+
+280px for the table is actually good, you can set it ONLY FOR THE TABLE AND THE GRAPH, not the whole section.
+
+I didn't say the history section, I meant ONLY and ONLY the table, the table element. and the chart.
+
+Actually, 300px seems better.
+
+There is a big problem with the "Taxa de aprovação" graph. First tell me, are you inventing this graph or is it a library?
+
+Yes, I want a proper library. You can add whatever you want, JUST ASK ME FIRST, don't make anything from scratch, that doesn't help. You asked for permission, I just didn't see it, so prompt it the next time
+
+The front end is giving the following error: [plugin:vite:import-analysis] Failed to resolve import "react-is" from "node_modules/.vite/deps/recharts.js?v=b0c117a0". Does the file exist?
+
+Below 1500px of width, the graph doesn't show.
+
+Show the offline server warning for everytime that total failed tests == total of tests
+
+Now, as you just changed the library to Recharts, change the donut graph. It should show visibly how many passed and how many doesn't. If it isn't possible using a donut graph, say it
+
+The trend arrow should be another card. Perhaps, instead of having a text below the graph, try putting a text in the center, that shows passsing/not passing, in numbers, with respective green and red colors
+Can't the label be inside? And change the colors to pastel toned colors
+Actually, let's do the following, make them individual, no pie chart, only numbers. One for passing and one for not passing.
+For the offline server in the History table, just put a yellow warning icon , with the background that is already there, but only show the "Servidor offline" message if the use hovers the icon
+
+"⚠ Todos os testes falharam após uma execução parcialmente bem-sucedida. O servidor HelpFlow pode estar offline.
+" Parcialmente bem-sucedida makes no sense now, rephrase it, and tell me, before actually fixing it
 # Como rodar:
 Dentro de helpflow-dashboard, rodar:
 * npm run dev (rodar frontend)

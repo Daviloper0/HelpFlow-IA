@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
 import type { View } from '../../types';
 import { cx } from '../../utils/cx';
-import { BarChartIcon, FileTextIcon, FlaskIcon } from '../ui/icons';
+import { BarChartIcon, FileTextIcon, FlaskIcon, TrendingUpIcon } from '../ui/icons';
 import styles from './Sidebar.module.css';
 
 const NAV_ITEMS: { view: View; label: string; icon: ReactNode }[] = [
   { view: 'analysis', label: 'Análise', icon: <BarChartIcon /> },
+  { view: 'statistics', label: 'Estatísticas', icon: <TrendingUpIcon /> },
   { view: 'tests', label: 'Testes de API', icon: <FlaskIcon /> },
   { view: 'docs', label: 'Documentação OpenAPI', icon: <FileTextIcon /> },
 ];

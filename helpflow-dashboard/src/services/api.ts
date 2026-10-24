@@ -3,7 +3,9 @@ import type {
   ApiTestInput,
   DocRoute,
   DocRouteInput,
+  GlobalStats,
   OpenApiStatus,
+  SuiteRun,
   TestRun,
 } from '../types';
 
@@ -74,6 +76,20 @@ export async function runAll(
       if (line.trim()) onResult(JSON.parse(line) as { testId: number } & TestRun);
     }
   }
+}
+
+// ---- Suite Runs ----
+
+export function listSuiteRuns(): Promise<SuiteRun[]> {
+  return request('/api/suite-runs');
+}
+
+export function setSuiteRunHidden(id: number, hidden: boolean): Promise<void> {
+  return request(`/api/suite-runs/${id}/hidden`, { method: 'PATCH', body: JSON.stringify({ hidden }) });
+}
+
+export function getGlobalStats(): Promise<GlobalStats> {
+  return request('/api/suite-runs/statistics');
 }
 
 // ---- Documentação OpenAPI ----

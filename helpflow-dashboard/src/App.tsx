@@ -2,9 +2,11 @@ import { useCallback, useState } from 'react';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { useDocRoutes } from './hooks/useDocRoutes';
 import { useOpenApiStatus } from './hooks/useOpenApiStatus';
+import { useSuiteRuns } from './hooks/useSuiteRuns';
 import { useTests } from './hooks/useTests';
 import { AnalysisPage } from './modules/analysis/AnalysisPage';
 import { DocsPage } from './modules/docs/DocsPage';
+import { StatisticsPage } from './modules/statistics/StatisticsPage';
 import { TestsPage } from './modules/tests/TestsPage';
 import type { View } from './types';
 import styles from './App.module.css';
@@ -21,11 +23,18 @@ export function App() {
   const tests = useTests();
   const docs = useDocRoutes();
   const openApi = useOpenApiStatus();
+  const suiteRuns = useSuiteRuns();
 
   const goToTest = useCallback((id: number) => {
     setFocusTestId(id);
     setView('tests');
   }, []);
+
+  // Reload suite runs after a full run completes
+  const handleRunAll = useCallback(async () => {
+    await tests.runAll();
+    suiteRuns.reload();
+  }, [tests.runAll, suiteRuns.reload]);
 
   const clearFocus = useCallback(() => setFocusTestId(null), []);
 
@@ -45,9 +54,18 @@ export function App() {
               focusTestId={focusTestId}
               onFocusDone={clearFocus}
               onRunTest={tests.runTest}
-              onRunAll={tests.runAll}
+              onRunAll={handleRunAll}
               onSave={tests.saveTest}
               onDelete={tests.deleteTest}
+            />
+          )}
+
+          {view === 'statistics' && (
+            <StatisticsPage
+              runs={suiteRuns.runs}
+              stats={suiteRuns.stats}
+              loading={suiteRuns.loading}
+              onToggleHidden={suiteRuns.toggleHidden}
             />
           )}
 

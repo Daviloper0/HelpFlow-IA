@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { config } from '../config';
-import { getTestById, insertExecution, listTests } from '../db/queries';
+import { getTestById, insertExecution, insertSuiteRun, listTests, updateSuiteRunStats } from '../db/queries';
 import { executeRequest } from '../lib/executor';
 import { validate } from '../lib/validator';
 
@@ -89,7 +89,12 @@ runnerRouter.post('/run-all', async (_req, res) => {
   res.flushHeaders();
 
   const tests = listTests({ order: 'asc' });
+  const suiteStartAt = Date.now();
+  const suiteRunId = insertSuiteRun({ ranAt: suiteStartAt, total: tests.length, passed: 0, failed: 0, durationMs: 0 });
+
   const context: Context = {};
+  let suitePass = 0;
+  let suiteFail = 0;
 
   for (const test of tests) {
     const actualRequestBody = interpolate(test.requestBody, context);
@@ -111,6 +116,7 @@ runnerRouter.post('/run-all', async (_req, res) => {
     );
 
     const ranAt = Date.now();
+    if (passed) suitePass++; else suiteFail++;
 
     insertExecution({
       testId: test.id,
@@ -122,6 +128,7 @@ runnerRouter.post('/run-all', async (_req, res) => {
       failureMessage,
       ranAt,
       durationMs: result.durationMs,
+      suiteRunId,
     });
 
     if (test.capturePath && test.captureAs) {
@@ -140,6 +147,13 @@ runnerRouter.post('/run-all', async (_req, res) => {
       failureMessage,
     }) + '\n');
   }
+
+  updateSuiteRunStats(suiteRunId, {
+    total: tests.length,
+    passed: suitePass,
+    failed: suiteFail,
+    durationMs: Date.now() - suiteStartAt,
+  });
 
   res.end();
 });
