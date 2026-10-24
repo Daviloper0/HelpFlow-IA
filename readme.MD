@@ -570,7 +570,43 @@ The expected status is not a necessary field in the comparison, we know it's val
 The "Devem ser mencionados na descrição ao usar o prompt de IA" was only a text for you to add in the prompt for the other AI, for the user a text like "Os outros usos serão sinalizados para que a IA adicione na descrição". Just rewrite what I've said to something that makes more sense
 
 The prompt should be shown to the user, so he knows what he is copying. Put the copy prompt on top of the window, and the prompt below it.
+
+Now, back to the statistic module.
+
+Every time the card is hovered, there should be a color change in the background, that doesn't affect the readability of the text. By card, I mean the row in the KPI
+
+It looks good, now, analyze how the datils window (from the history table) work. Copy the looks.
+
+All the cards that you made hoverable should open a window. And the user shouldn't be able to copy the text
+
+The execution shoud list all suits, ask me more questions about how they should look in the context window.
+
+Distrubution of test durations look like a good idea, ask me more questions about it.
+
+Mais lento should list the full test name, details
+
+Let's do one by one of the tests we've done. Don't do all at once, start with the first and first, show me your plan.
+
+1. Yes, show the table with those data + regression, recovery and new failures. But if you think it will be too big, tel me.
+2. We should use pages, let's start with 10 rows per page.
+3.  Yes, it should
+4. Only the visible ones.
+
+Any more questions?
+
+Just one thing, add the cursor:pointer only to the ones that have a context/analisys window, so remove from the ones that don't from the KPI
+
+Make the context window for the executions, bigger, perhaps 80% of the width. Instead of a "Ver Detalhes" button, make it that if the user clicks on it, then the detailed test suit window will open. The same change can be done to ALL tables. Any other questions?
+
+The hover on the rows aren't interactive enough. They don't look like they are being hovered. Make them darker while hovering
+
+I think the hover effect isn't working, I restarted the server, but it didn't work. The click works, and so does the cursor:pointer, but it doesn't get dark
+
+Change "Mais lento - Última execução" to "Teste mais lento da última execução"
+
+
 # Como rodar:
+Necessário Desktop Development with C++, disponível pelo Visual Studio Installer, e o Node JS
 Dentro de helpflow-dashboard, rodar:
 * npm run dev (rodar frontend)
 e depois: cd server

@@ -34,7 +34,7 @@ export function StatisticsPage({ runs, stats, loading, onToggleHidden }: Statist
         <p className={styles.empty}>Carregando…</p>
       ) : (
         <>
-          <KpiRow stats={stats} />
+          <KpiRow stats={stats} runs={runs} />
 
           <div className={styles.midRow}>
             <div className={styles.chartSection}>

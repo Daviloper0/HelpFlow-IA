@@ -14,6 +14,17 @@
   background: var(--surface);
   border: 1px solid var(--line-soft);
   border-radius: 12px;
+  transition: background 0.15s, border-color 0.15s;
+  user-select: none;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.card:hover {
+  background: var(--surface-raised, #f0f2f5);
+  border-color: var(--line, #c8cdd4);
 }
 
 .label {

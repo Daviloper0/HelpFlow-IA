@@ -50,6 +50,9 @@
 }
 
 /* Alternating rows */
+.clickableRow { cursor: pointer; }
+.clickableRow:hover td { background: #b8d4f0 !important; }
+
 .even { background: #e8f2ff; }
 .odd  { background: #ffffff; }
 

@@ -1,4 +1,6 @@
-import type { GlobalStats } from '../../types';
+import { useState } from 'react';
+import type { GlobalStats, SuiteRun } from '../../types';
+import { SuiteRunsModal } from './SuiteRunsModal';
 import styles from './KpiRow.module.css';
 
 function fmt(ms: number): string {
@@ -15,12 +17,17 @@ function TrendArrow({ trend }: { trend: 'up' | 'down' | 'flat' | null }) {
 
 interface KpiRowProps {
   stats: GlobalStats;
+  runs: SuiteRun[];
 }
 
-export function KpiRow({ stats }: KpiRowProps) {
+export function KpiRow({ stats, runs }: KpiRowProps) {
+  const [showRuns, setShowRuns] = useState(false);
+
   return (
+    <>
+      {showRuns && <SuiteRunsModal runs={runs} onClose={() => setShowRuns(false)} />}
     <div className={styles.row}>
-      <div className={styles.card}>
+      <div className={`${styles.card} ${styles.clickable}`} onClick={() => setShowRuns(true)}>
         <span className={styles.label}>Execuções</span>
         <span className={styles.value}>{stats.totalRuns}</span>
         <span className={styles.sub}>suites rodadas</span>
@@ -39,7 +46,7 @@ export function KpiRow({ stats }: KpiRowProps) {
       </div>
 
       <div className={styles.card}>
-        <span className={styles.label}>Mais lento — última execução</span>
+        <span className={styles.label}>Teste mais lento da última execução</span>
         {stats.slowestTest ? (
           <>
             <span className={styles.value}>{fmt(stats.slowestTest.durationMs)}</span>
@@ -72,5 +79,6 @@ export function KpiRow({ stats }: KpiRowProps) {
         </span>
       </div>
     </div>
+    </>
   );
 }

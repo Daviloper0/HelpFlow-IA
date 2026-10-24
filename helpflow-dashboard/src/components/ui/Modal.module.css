@@ -28,6 +28,9 @@
 .lg {
   max-width: 700px;
 }
+.xl {
+  max-width: 80vw;
+}
 
 .header {
   display: flex;

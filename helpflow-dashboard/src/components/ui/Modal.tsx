@@ -8,7 +8,7 @@ interface ModalProps {
   title: string;
   /** Elemento mostrado antes do título (ex.: selo do método HTTP). */
   badge?: ReactNode;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   onClose: () => void;
   children: ReactNode;
   /** Botões do rodapé. */

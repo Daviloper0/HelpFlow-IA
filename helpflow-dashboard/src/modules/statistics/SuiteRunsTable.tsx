@@ -34,7 +34,6 @@ export function SuiteRunsTable({ runs, allRuns, onToggleHidden }: Props) {
               <th className={styles.numCol}>Total</th>
               <th className={styles.numCol}>Aprovados</th>
               <th className={styles.numCol}>Falhas</th>
-              <th className={styles.actionsCol}>Detalhes</th>
               <th className={styles.actionsCol}>Visibilidade</th>
             </tr>
           </thead>
@@ -46,9 +45,11 @@ export function SuiteRunsTable({ runs, allRuns, onToggleHidden }: Props) {
                   key={run.id}
                   className={cx(
                     styles.row,
+                    styles.clickableRow,
                     rowIdx % 2 === 0 ? styles.even : styles.odd,
                     run.hidden && styles.hiddenRow,
                   )}
+                  onClick={() => setSelected(run)}
                 >
                   <td className={styles.dateCell}>
                     <span>{fmtDate(run.ranAt)}</span>
@@ -70,16 +71,8 @@ export function SuiteRunsTable({ runs, allRuns, onToggleHidden }: Props) {
                   </td>
                   <td style={{ textAlign: 'center' }}>
                     <button
-                      className={styles.detailBtn}
-                      onClick={() => setSelected(run)}
-                    >
-                      Ver detalhes
-                    </button>
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <button
                       className={styles.hideBtn}
-                      onClick={() => onToggleHidden(run.id, !run.hidden)}
+                      onClick={(e) => { e.stopPropagation(); onToggleHidden(run.id, !run.hidden); }}
                       title={run.hidden ? 'Incluir nos gráficos' : 'Excluir dos gráficos'}
                     >
                       {run.hidden ? 'Mostrar' : 'Esconder'}

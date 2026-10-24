@@ -1,0 +1,88 @@
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--line-strong);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 500 13px/1.4 var(--font-sans);
+}
+
+.table thead th {
+  padding: 11px 16px;
+  text-align: left;
+  font: 700 12px/1.3 var(--font-sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: #32a0e9;
+  border-right: 1px solid #5cb5ef;
+  white-space: nowrap;
+}
+.table thead th:last-child { border-right: none; }
+.table thead th.numCol { text-align: right; }
+
+.row td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line-soft);
+  border-right: 1px solid var(--line-soft);
+  vertical-align: middle;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.row td:last-child { border-right: none; }
+.row:last-child td { border-bottom: none; }
+
+.clickableRow { cursor: pointer; }
+.clickableRow:hover td { background: #b8d4f0 !important; }
+
+.even { background: #e8f2ff; }
+.odd  { background: #ffffff; }
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.dateCell { white-space: nowrap; }
+
+.pass { color: var(--success-fg); font-weight: 700; }
+.fail { color: var(--danger-fg);  font-weight: 700; }
+
+/* ── Pagination ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pageBtn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--ink);
+  font: 500 13px/1 var(--font-sans);
+  cursor: pointer;
+}
+.pageBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.pageBtn:not(:disabled):hover {
+  border-color: var(--ink);
+}
+
+.pageInfo {
+  font: 500 13px/1 var(--font-sans);
+  color: var(--muted);
+}
+
+.empty {
+  color: var(--muted);
+  font: 500 14px/1.5 var(--font-sans);
+  text-align: center;
+  padding: 24px 0;
+}
