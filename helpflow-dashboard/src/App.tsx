@@ -69,7 +69,7 @@ export function App() {
             />
           )}
 
-          {view === 'docs' && <DocsPage routes={docs.routes} loading={docs.loading} onAddRoute={docs.addRoute} />}
+          {view === 'docs' && <DocsPage routes={docs.routes} tests={tests.tests} loading={docs.loading} onAddRoute={docs.addRoute} />}
         </div>
       </main>
     </div>

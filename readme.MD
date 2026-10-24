@@ -505,6 +505,24 @@ For the offline server in the History table, just put a yellow warning icon , wi
 
 "⚠ Todos os testes falharam após uma execução parcialmente bem-sucedida. O servidor HelpFlow pode estar offline.
 " Parcialmente bem-sucedida makes no sense now, rephrase it, and tell me, before actually fixing it
+
+# OpenAPI module.
+
+Now, there is the OpenAPI documentation module. And I want it to be based on the API tests only, not on the real program, and the way I want to do it, is that, for the user to paste a prompt in their harness to actually run the tests. How could we do that? Give me ideas
+
+I also like the idea 4. But it shouldn't be created automatically, instead,there should be a button, besides the add route button that creates automatically, and after creating, it opens a window, asking if the user wants to copy the prompt of the created route documentation for AI to fill.
+
+If all routes from tests are already on the docs, then a window should pop up, saying that all tests are already on the documentation.
+
+Any more questions? Say your plan before proceeding
+
+Ai should fill the description, and perhaps add more errors that aren't catched by the api tester, but there are a couple of tests that test what shouldn't be put on the api call. Is that your idea? And for the question you've made, you can do the exact string match with the placeholders
+
+Yeah, but it should only be filled with errors that actually exist in the backend, right? You shall proceed though.
+
+Change the name from "Gerar dos testes" to "Gerar à partir dos testes"
+
+First, there should be a way to delete a route, add it
 # Como rodar:
 Dentro de helpflow-dashboard, rodar:
 * npm run dev (rodar frontend)
