@@ -522,7 +522,15 @@ Yeah, but it should only be filled with errors that actually exist in the backen
 
 Change the name from "Gerar dos testes" to "Gerar à partir dos testes"
 
-First, there should be a way to delete a route, add it
+First, there should be a way to delete a route, add a button, and there should also be a way to edit a route. You could copy the style from API tests
+
+There should be a description field for routes
+
+There should be a section title for description on the route, just like "Exemplo de requisição" Or "Resposta esperada"
+
+Now, notice how many of the routes aren't actually routes. Here is an idea of how it could work.
+
+When the user clicks the button to generate from tests, only the tests that generates a valid response, such as 200 should be treated as routes, and the possible errors sections should be all those other tests aren't a success. So for a post ticket there should be only one route. If there are multiple valid routes (multiple routes with 200 as response), then a window should open, to compare those. The comparison should show all the differences between them. Ask me questions about how a comparison could work to make sure you make a good comparison window.
 # Como rodar:
 Dentro de helpflow-dashboard, rodar:
 * npm run dev (rodar frontend)

@@ -6,7 +6,7 @@ import { PlusIcon, TrashIcon } from '../../components/ui/icons';
 import { Modal, ModalSection } from '../../components/ui/Modal';
 import { HTTP_METHODS, METHOD_COLORS } from '../../constants/http';
 import type { DocRouteInput, RouteFormValues } from '../../types';
-import { emptyRouteForm, formToRouteInput } from '../../utils/forms';
+import { emptyRouteForm, formToRouteInput, routeToForm } from '../../utils/forms';
 import { hasRouteFormErrors, validateRouteForm } from '../../utils/validation';
 import styles from './RouteFormModal.module.css';
 
@@ -20,11 +20,14 @@ const METHOD_OPTIONS = HTTP_METHODS.map((method) => ({
 interface RouteFormModalProps {
   onClose: () => void;
   onSubmit: (input: DocRouteInput) => Promise<void>;
+  initialRoute?: import('../../types').DocRoute;
 }
 
-/** Janela para documentar uma rota nova: identificação, requisição, sucesso e erros. */
-export function RouteFormModal({ onClose, onSubmit }: RouteFormModalProps) {
-  const [values, setValues] = useState<RouteFormValues>(emptyRouteForm);
+/** Janela para documentar uma rota nova ou editar uma existente. */
+export function RouteFormModal({ onClose, onSubmit, initialRoute }: RouteFormModalProps) {
+  const [values, setValues] = useState<RouteFormValues>(
+    initialRoute ? routeToForm(initialRoute) : emptyRouteForm,
+  );
   const [tried, setTried] = useState(false);
   const [saving, setSaving] = useState(false);
   const nextErrorKey = useRef(1);
@@ -70,13 +73,13 @@ export function RouteFormModal({ onClose, onSubmit }: RouteFormModalProps) {
 
   return (
     <Modal
-      title="Adicionar rota"
+      title={initialRoute ? 'Editar rota' : 'Adicionar rota'}
       onClose={onClose}
       footer={
         <>
           <Button onClick={onClose}>Cancelar</Button>
           <Button variant="primary" disabled={saving} onClick={handleSave}>
-            Adicionar rota
+            {initialRoute ? 'Salvar alterações' : 'Adicionar rota'}
           </Button>
         </>
       }
@@ -107,6 +110,15 @@ export function RouteFormModal({ onClose, onSubmit }: RouteFormModalProps) {
             value={values.route}
             invalid={tried && !!errors.route}
             onChange={(event) => setField('route', event.target.value)}
+          />
+        </Field>
+
+        <Field label="Descrição" htmlFor="route-description" hint="O que esta rota faz.">
+          <TextArea
+            id="route-description"
+            placeholder="Descreva o propósito desta rota…"
+            value={values.description}
+            onChange={(event) => setField('description', event.target.value)}
           />
         </Field>
       </ModalSection>

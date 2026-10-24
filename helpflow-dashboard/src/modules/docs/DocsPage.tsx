@@ -13,6 +13,8 @@ interface DocsPageProps {
   tests: ApiTest[];
   loading: boolean;
   onAddRoute: (input: DocRouteInput) => Promise<DocRoute>;
+  onUpdateRoute: (id: number, input: DocRouteInput) => Promise<DocRoute>;
+  onDeleteRoute: (id: number) => Promise<void>;
 }
 
 function buildPrompt(created: DocRouteInput[]): string {
@@ -47,10 +49,11 @@ type Modal =
   | { kind: 'prompt'; prompt: string; copied: boolean };
 
 /** Módulo "Documentação OpenAPI": lista das rotas, cada uma em um card que abre e fecha. */
-export function DocsPage({ routes, tests, loading, onAddRoute }: DocsPageProps) {
+export function DocsPage({ routes, tests, loading, onAddRoute, onUpdateRoute, onDeleteRoute }: DocsPageProps) {
   // Só um card fica aberto por vez. null = todos recolhidos.
   const [openId, setOpenId] = useState<number | null>(null);
   const [adding, setAdding] = useState(false);
+  const [editing, setEditing] = useState<DocRoute | null>(null);
   const [modal, setModal] = useState<Modal | null>(null);
   const [generating, setGenerating] = useState(false);
 
@@ -58,6 +61,17 @@ export function DocsPage({ routes, tests, loading, onAddRoute }: DocsPageProps) 
     const created = await onAddRoute(input);
     setOpenId(created.id);
     setAdding(false);
+  }
+
+  async function handleEdit(input: DocRouteInput) {
+    if (!editing) return;
+    await onUpdateRoute(editing.id, input);
+    setEditing(null);
+  }
+
+  async function handleDelete(id: number) {
+    await onDeleteRoute(id);
+    if (openId === id) setOpenId(null);
   }
 
   async function handleGenerate() {
@@ -125,6 +139,8 @@ export function DocsPage({ routes, tests, loading, onAddRoute }: DocsPageProps) 
               route={route}
               open={route.id === openId}
               onToggle={() => setOpenId(route.id === openId ? null : route.id)}
+              onEdit={() => setEditing(route)}
+              onDelete={() => handleDelete(route.id)}
             />
           ))}
         </ul>
@@ -137,6 +153,7 @@ export function DocsPage({ routes, tests, loading, onAddRoute }: DocsPageProps) 
       )}
 
       {adding && <RouteFormModal onClose={() => setAdding(false)} onSubmit={handleAdd} />}
+      {editing && <RouteFormModal onClose={() => setEditing(null)} onSubmit={handleEdit} initialRoute={editing} />}
 
       {modal?.kind === 'allDone' && (
         <div className={styles.overlay}>

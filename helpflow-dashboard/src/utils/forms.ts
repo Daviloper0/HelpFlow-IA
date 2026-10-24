@@ -48,11 +48,25 @@ export function formToTestInput(values: TestFormValues): ApiTestInput {
   };
 }
 
+export function routeToForm(route: import('../types').DocRoute): RouteFormValues {
+  return {
+    title: route.title,
+    method: route.method,
+    route: route.route,
+    description: route.description,
+    requestBody: route.requestBody,
+    successStatus: String(route.successStatus),
+    successBody: route.successBody,
+    errors: route.errors.map((e) => ({ status: String(e.status), body: e.body })),
+  };
+}
+
 export function emptyRouteForm(): RouteFormValues {
   return {
     title: '',
     method: 'GET',
     route: '/api/',
+    description: '',
     requestBody: '',
     successStatus: '200',
     successBody: '',
@@ -66,6 +80,7 @@ export function formToRouteInput(values: RouteFormValues): DocRouteInput {
     title: values.title.trim(),
     method: values.method,
     route: values.route.trim(),
+    description: values.description.trim(),
     requestBody: values.requestBody,
     successStatus: Number(values.successStatus.trim()),
     successBody: values.successBody,

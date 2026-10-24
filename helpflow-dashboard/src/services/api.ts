@@ -102,6 +102,14 @@ export function createDocRoute(input: DocRouteInput): Promise<DocRoute> {
   return request('/api/doc-routes', { method: 'POST', body: JSON.stringify(input) });
 }
 
+export function updateDocRoute(id: number, input: DocRouteInput): Promise<DocRoute> {
+  return request(`/api/doc-routes/${id}`, { method: 'PUT', body: JSON.stringify(input) });
+}
+
+export function deleteDocRoute(id: number): Promise<void> {
+  return request(`/api/doc-routes/${id}`, { method: 'DELETE' });
+}
+
 export function getOpenApiStatus(): Promise<OpenApiStatus> {
   return request('/api/openapi-status');
 }

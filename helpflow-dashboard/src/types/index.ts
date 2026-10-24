@@ -73,6 +73,7 @@ export interface DocRoute {
   method: HttpMethod;
   route: string;
   title: string;
+  description: string;
   requestBody: string;
   successStatus: number;
   successBody: string;
@@ -167,6 +168,7 @@ export interface RouteFormValues {
   title: string;
   method: HttpMethod;
   route: string;
+  description: string;
   requestBody: string;
   successStatus: string;
   successBody: string;

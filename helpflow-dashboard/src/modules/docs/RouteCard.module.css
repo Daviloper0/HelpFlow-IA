@@ -5,7 +5,20 @@
   background: var(--surface);
 }
 
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.cardActions {
+  display: flex;
+  gap: 4px;
+  padding: 0 12px;
+  flex-shrink: 0;
+}
+
 .summary {
+  flex: 1;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -75,6 +88,12 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.description {
+  font: 400 14px/1.6 var(--font-sans);
+  color: var(--ink);
+  margin: 0;
 }
 
 .empty {

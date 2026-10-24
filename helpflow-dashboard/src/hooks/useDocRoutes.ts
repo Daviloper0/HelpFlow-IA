@@ -25,5 +25,16 @@ export function useDocRoutes() {
     return created;
   }, []);
 
-  return { routes, loading, addRoute };
+  const updateRoute = useCallback(async (id: number, input: DocRouteInput) => {
+    const updated = await api.updateDocRoute(id, input);
+    setRoutes((list) => list.map((r) => (r.id === id ? updated : r)));
+    return updated;
+  }, []);
+
+  const deleteRoute = useCallback(async (id: number) => {
+    await api.deleteDocRoute(id);
+    setRoutes((list) => list.filter((r) => r.id !== id));
+  }, []);
+
+  return { routes, loading, addRoute, updateRoute, deleteRoute };
 }

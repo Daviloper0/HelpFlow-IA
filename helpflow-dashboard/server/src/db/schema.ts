@@ -82,6 +82,12 @@ if (!execColsV2.includes('suite_run_id')) {
   db.exec(`ALTER TABLE executions ADD COLUMN suite_run_id INTEGER REFERENCES suite_runs(id)`);
 }
 
+// Add description to doc_routes if not present
+const docRouteCols = (db.pragma('table_info(doc_routes)') as { name: string }[]).map((c) => c.name);
+if (!docRouteCols.includes('description')) {
+  db.exec(`ALTER TABLE doc_routes ADD COLUMN description TEXT NOT NULL DEFAULT ''`);
+}
+
 db.exec(`
 
   CREATE TABLE IF NOT EXISTS doc_routes (
