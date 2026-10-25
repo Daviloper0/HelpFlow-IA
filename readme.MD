@@ -689,6 +689,17 @@ No, you didn't understand, total is the number of tests, it can be 0 with no pro
 
 The "Ignorar offline" button isn't working for the passed === 0 && failed === 0, but is working normally to the ones that failed === total.
 
+
+BACKEND: 
+Now, create a file called PROBLEMS.md. This is where everytime you find a bug, you should log your solutions there too, so if the bugs happen again, you will know where not to look. It won't be read by a human, so, optimize the writing to not use a lot of tokens, as everytime you are solving a problem, you WILL look there, this is unnegotiable. So, the workflow is the following:
+1. Someone tells you a bug
+2. You ask questions to really understand the bug, so, when it happens, what happens, in what conditions, and so on
+3. You look for it on the PROBLEMS.md file, if the bug doesn't exist, write it down, describing what's happening, in a way everytime you open that file, you can find a list of all the bugs you solved, or if it's not really a bug. If it does exist, understand the existing solutions, and what they solve, and what they don't.
+4. Every solution you find, write on that file
+
+What I don't want: 
+1. A copy of what you said in the chat
+2. A fake solution, an honest no is better
 # Como rodar:
 Necessário Desktop Development with C++, disponível pelo Visual Studio Installer, e o Node JS
 Dentro de helpflow-dashboard, rodar:
