@@ -700,6 +700,49 @@ Now, create a file called PROBLEMS.md. This is where everytime you find a bug, y
 What I don't want: 
 1. A copy of what you said in the chat
 2. A fake solution, an honest no is better
+
+I changed computers, and because of that, the users aren't the same. This is why some tests failed. But the thing is, doesn't matter if it's the first time running or the last.
+
+[1] PATCH /user/cab9e6ce-a004-4d13-988d-1378a52f55e1/promote/4b53bd08-d1c8-4c00-813e-e336397bd050
+Requisição: (sem corpo)
+Resposta esperada: status 409, {"errorCode":"ALREADY_TECHNICIAN","errorMessage":"User is already a technician"}
+Resposta recebida: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"Administrator not found"}
+
+[2] PATCH /user/4b53bd08-d1c8-4c00-813e-e336397bd050/promote/7f856fb4-88f9-4788-8097-61bcf463509a
+Requisição: (sem corpo)
+Resposta esperada: status 403, {"errorCode":"NOT_ADMINISTRATOR","errorMessage":"Only administrators can promote users to technician"}
+Resposta recebida: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"Administrator not found"}
+
+[3] PATCH /user/cab9e6ce-a004-4d13-988d-1378a52f55e1/promote/00000000-0000-0000-0000-000099999999
+Requisição: (sem corpo)
+Resposta esperada: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"User not found"}
+Resposta recebida: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"Administrator not found"}
+
+[4] PATCH /user/cab9e6ce-a004-4d13-988d-1378a52f55e1/promote/{{registeredUserId}}
+Requisição: (sem corpo)
+Resposta esperada: status 200, {"responseMessage":"User is now a technician","responseUserId":"{{any}}"}
+Resposta recebida: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"Administrator not found"}
+
+[5] PATCH /ticket/{{assignedTicketId}}/solve
+Requisição: (sem corpo)
+Resposta esperada: status 200, {"assignedTo":"4b53bd08-d1c8-4c00-813e-e336397bd050","category":"Printer","createdBy":"7f856fb4-88f9-4788-8097-61bcf463509a","description":"A impressora do 3º andar parou de imprimir","id":"{{any}}","priority":"High","status":"Solved","title":"Impressora não funciona"}
+Resposta recebida: status 400, {"errorCode":"INVALID_TICKET_ID","errorMessage":"Invalid ticketId"}
+
+[6] PATCH /ticket/{{createdTicketId}}/assign
+Requisição: {"technicianId": "cab9e6ce-a004-4d13-988d-1378a52f55e1"}
+Resposta esperada: status 400, {"errorCode":"USER_NOT_TECHNICIAN","errorMessage":"User is not a technician"}
+Resposta recebida: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"User not found"}
+
+[7] PATCH /ticket/{{createdTicketId}}/assign
+Requisição: {"technicianId": "4b53bd08-d1c8-4c00-813e-e336397bd050"}
+Resposta esperada: status 200, {"assignedTo":"4b53bd08-d1c8-4c00-813e-e336397bd050","category":"Printer","createdBy":"7f856fb4-88f9-4788-8097-61bcf463509a","description":"A impressora do 3º andar parou de imprimir","id":"{{any}}","priority":"High","status":"InProgress","title":"Impressora não funciona"}
+Resposta recebida: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"User not found"}
+
+The other test that failed was the "Rejeitar email duplicado", that don't show here, because i executed the test two times. But the first time, they fail. Don't forget to add the problem in problems.md, following the guideline in readme.md
+
+Can't we have an alternative? I can give you the credentials, but imagine doing that for every computer?
+
+Is there a way so that the first time a db is ran, it creates an admin with default password and user?
 # Como rodar:
 Necessário Desktop Development with C++, disponível pelo Visual Studio Installer, e o Node JS
 Dentro de helpflow-dashboard, rodar:

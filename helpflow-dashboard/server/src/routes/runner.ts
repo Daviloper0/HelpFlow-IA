@@ -7,8 +7,9 @@ import { validate } from '../lib/validator';
 type Context = Record<string, string>;
 
 function interpolate(text: string, context: Context = {}): string {
+  const ts = context.timestamp ?? Date.now().toString();
   return text
-    .replace(/\{\{timestamp\}\}/g, Date.now().toString())
+    .replace(/\{\{timestamp\}\}/g, ts)
     .replace(/\{\{(\w+)\}\}/g, (_, key) => context[key] ?? `{{${key}}}`);
 }
 
@@ -92,7 +93,7 @@ runnerRouter.post('/run-all', async (_req, res) => {
   const suiteStartAt = Date.now();
   const suiteRunId = insertSuiteRun({ ranAt: suiteStartAt, total: tests.length, passed: 0, failed: 0, durationMs: 0 });
 
-  const context: Context = {};
+  const context: Context = { timestamp: Date.now().toString() };
   let suitePass = 0;
   let suiteFail = 0;
 

@@ -115,6 +115,52 @@ safety net: `db.close()` finalizes all live module-level Statements cleanly on s
 
 ---
 
+## Tests fail after changing machines / fresh HelpFlow DB
+
+### The problem
+
+Several tests hardcoded UUIDs for admin, technician, and customer users
+(`cab9e6ce...`, `4b53bd08...`, `7f856fb4...`) that only existed in the original
+machine's HelpFlow database. On a new machine those users don't exist, so every
+test that used them as a route segment or in a request/expected body received
+`USER_NOT_FOUND` instead of the expected response.
+
+Additionally, "Rejeitar email duplicado" used a fixed email (`emailbomba@email.com`)
+and expected a 409, but on a fresh DB that email had never been registered, so
+it received 201 and failed.
+
+### Fix applied
+
+1. **`runner.ts`** — `{{timestamp}}` is now evaluated **once** at suite start and
+   stored in `context.timestamp`, making it consistent across all tests in the
+   same run. Previously it called `Date.now()` on every replacement, producing
+   different values for each test.
+
+2. **Four setup tests inserted** at the top of the suite (sort_order 5–17):
+   - *Login como administrador* — logs in with the default HelpFlow admin
+     (`admin@helpflow.com` / `Admin@123`) and captures `adminUserId`.
+   - *Registrar técnico para testes* — registers a fresh user per run using
+     `{{timestamp}}`, captures `technicianSetupId`.
+   - *Promover técnico para testes* — promotes that user using `{{adminUserId}}`.
+   - *Registrar cliente para testes* — registers another fresh user per run,
+     captures `customerSetupId`.
+
+3. **"Rejeitar email duplicado"** (test 3) — changed its `registerEmail` to
+   `test{{timestamp}}@example.com`, the same pattern as "Registrar usuário válido"
+   (test 2). Because `{{timestamp}}` is now fixed per run, test 2 registers the
+   address and test 3 immediately tries the same one, guaranteeing a 409 on
+   every run without any seed test.
+
+4. **All hardcoded UUIDs replaced** in tests 71, 74, 75, 78, 81, 85, 87, 88, 89, 90:
+   - `createdBy` in ticket request/response bodies → `{{customerSetupId}}` / `{{any}}`
+   - `technicianId` in assign requests → `{{technicianSetupId}}` or `{{customerSetupId}}`
+   - `assignedTo` in ticket response bodies → `{{any}}`
+   - Admin UUID in promote routes → `{{adminUserId}}`
+   - Non-admin UUID in promote routes → `{{customerSetupId}}`
+   - Already-technician UUID in promote routes → `{{technicianSetupId}}`
+
+---
+
 ## Server crash: `"await" can only be used inside an "async" function`
 
 ### The crash
