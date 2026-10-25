@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getGlobalStats, listSuiteRuns, setSuiteRunHidden } from '../db/queries';
+import { getGlobalStats, getSuiteRunExecutions, listSuiteRuns, setSuiteRunHidden } from '../db/queries';
 
 export const suiteRunsRouter = Router();
 
@@ -9,6 +9,12 @@ suiteRunsRouter.get('/', (_req, res) => {
 
 suiteRunsRouter.get('/statistics', (_req, res) => {
   res.json(getGlobalStats());
+});
+
+suiteRunsRouter.get('/:id/executions', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id)) return res.status(400).json({ error: 'Invalid id' });
+  return res.json(getSuiteRunExecutions(id));
 });
 
 suiteRunsRouter.patch('/:id/hidden', (req, res) => {

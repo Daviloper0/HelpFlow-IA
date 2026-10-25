@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { GlobalStats, SuiteRun } from '../../types';
+import { AvgDurationModal } from './AvgDurationModal';
 import { SuiteRunsModal } from './SuiteRunsModal';
 import styles from './KpiRow.module.css';
 
@@ -22,10 +23,12 @@ interface KpiRowProps {
 
 export function KpiRow({ stats, runs }: KpiRowProps) {
   const [showRuns, setShowRuns] = useState(false);
+  const [showAvgDuration, setShowAvgDuration] = useState(false);
 
   return (
     <>
       {showRuns && <SuiteRunsModal runs={runs} onClose={() => setShowRuns(false)} />}
+      {showAvgDuration && <AvgDurationModal runs={runs} onClose={() => setShowAvgDuration(false)} />}
     <div className={styles.row}>
       <div className={`${styles.card} ${styles.clickable}`} onClick={() => setShowRuns(true)}>
         <span className={styles.label}>Execuções</span>
@@ -39,7 +42,7 @@ export function KpiRow({ stats, runs }: KpiRowProps) {
         <span className={styles.sub}>no total</span>
       </div>
 
-      <div className={styles.card}>
+      <div className={`${styles.card} ${styles.clickable}`} onClick={() => setShowAvgDuration(true)}>
         <span className={styles.label}>Duração média</span>
         <span className={styles.value}>{fmt(stats.avgTestDurationMs)}</span>
         <span className={styles.sub}>por teste</span>

@@ -144,6 +144,13 @@ export interface GlobalStats {
   topRegressions: RegressionEntry[];
 }
 
+export interface SuiteRunExecution {
+  testId: number;
+  name: string;
+  durationMs: number;
+  passed: boolean;
+}
+
 // ---- Formulários (os campos são sempre texto até a validação) ----
 
 export interface TestFormValues {

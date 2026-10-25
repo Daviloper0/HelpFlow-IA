@@ -429,6 +429,29 @@ export function getGlobalStats(): GlobalStats {
   };
 }
 
+export interface SuiteRunExecutionJson {
+  testId: number;
+  name: string;
+  durationMs: number;
+  passed: boolean;
+}
+
+export function getSuiteRunExecutions(suiteRunId: number): SuiteRunExecutionJson[] {
+  return (db.prepare(`
+    SELECT e.test_id, t.name, e.duration_ms, e.passed
+    FROM executions e
+    JOIN tests t ON t.id = e.test_id
+    WHERE e.suite_run_id = ?
+    ORDER BY e.duration_ms DESC
+  `).all(suiteRunId) as { test_id: number; name: string; duration_ms: number; passed: number }[])
+    .map((r) => ({
+      testId: r.test_id,
+      name: r.name,
+      durationMs: r.duration_ms,
+      passed: r.passed === 1,
+    }));
+}
+
 export interface StatsRow {
   total: number;
   last_ran_at: number | null;

@@ -604,6 +604,20 @@ I think the hover effect isn't working, I restarted the server, but it didn't wo
 
 Change "Mais lento - Última execução" to "Teste mais lento da última execução"
 
+Now, tell me what were your ideas, and perhaps tell me more ideas of what to do in the medium duration of the tests
+
+Couldn't we use a vertical bar chart where x is the time in ms and the y is the number of tests that used that time in ms?
+
+Average over time is also good, I like it, just don't know how we could visualize it.
+
+I actually want both of the ideas. Just let make it more clear
+Sure, just let's try with 50ms of range, not 0-100 and do it from the last suite ran. It does fit naturally, but i think it should have some filters, hours, days and weeks. The line chart looks good. Always only the visible tests, no hidden tests should be considered. Any more questions?
+
+When clicked on the test on the bar chart, another window should open, if possible showing the tests. DO you have a better idea on how to show the tests of a given time?
+
+The bucket doesn't look like it is working, I restarted the server, but nothing shows when I click the bar.
+
+Oh, it was my problem, actually, when you click on the bar, it shows. The problem is, there are bars that are really small, and the user can't actually click on it, so change that if the user clicks on the background, it works too, even if the bar is not visible. Does that make sense? Tell me your plan
 
 # Como rodar:
 Necessário Desktop Development with C++, disponível pelo Visual Studio Installer, e o Node JS

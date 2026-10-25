@@ -6,6 +6,7 @@ import type {
   GlobalStats,
   OpenApiStatus,
   SuiteRun,
+  SuiteRunExecution,
   TestRun,
 } from '../types';
 
@@ -82,6 +83,10 @@ export async function runAll(
 
 export function listSuiteRuns(): Promise<SuiteRun[]> {
   return request('/api/suite-runs');
+}
+
+export function getSuiteRunExecutions(id: number): Promise<SuiteRunExecution[]> {
+  return request(`/api/suite-runs/${id}/executions`);
 }
 
 export function setSuiteRunHidden(id: number, hidden: boolean): Promise<void> {

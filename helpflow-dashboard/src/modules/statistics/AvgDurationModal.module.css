@@ -1,0 +1,147 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.sectionTitle {
+  color: var(--muted);
+  font: 600 12px/1 var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chartWrap {
+  width: 100%;
+  height: 260px;
+}
+
+.filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--muted);
+  font: 500 12px/1 var(--font-sans);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  user-select: none;
+}
+
+.filterBtn:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.filterActive {
+  background: #32a0e9;
+  border-color: #32a0e9;
+  color: #ffffff;
+}
+
+.filterActive:hover {
+  background: #1b8fd6;
+  border-color: #1b8fd6;
+  color: #ffffff;
+}
+
+.bucketPanel {
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  overflow: hidden;
+  animation: fadeSlideIn 0.15s ease;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.bucketPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--surface-alt, #f5f7fa);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.bucketPanelTitle {
+  font: 600 13px/1 var(--font-sans);
+  color: var(--ink);
+}
+
+.bucketPanelClose {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 2px 4px;
+  line-height: 1;
+}
+.bucketPanelClose:hover { color: var(--ink); }
+
+.bucketList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.bucketItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.bucketItem:last-child { border-bottom: none; }
+
+.dotPass,
+.dotFail {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.dotPass { background: #1f9254; }
+.dotFail { background: #e53935; }
+
+.bucketName {
+  flex: 1;
+  font: 500 13px/1.4 var(--font-sans);
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bucketDuration {
+  flex-shrink: 0;
+  font: 600 13px/1 var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.empty {
+  color: var(--muted);
+  font: 500 14px/1.5 var(--font-sans);
+  text-align: center;
+  padding: 24px 0;
+}
