@@ -112,3 +112,30 @@ since they use identical SQL.
 
 The `process.once('SIGTERM')` / `process.on('exit')` cleanup handlers in `schema.ts` remain as a
 safety net: `db.close()` finalizes all live module-level Statements cleanly on shutdown.
+
+---
+
+## Server crash: `"await" can only be used inside an "async" function`
+
+### The crash
+
+```
+Error: Transform failed with 1 error:
+docs.ts:196:2: ERROR: "await" can only be used inside an "async" function
+```
+
+esbuild (used by tsx/cjs) rejects `await` inside a non-async function at compile time, so the
+server fails to start entirely.
+
+### Cause
+
+After adding `async writeOpenApi()` and calling `await writeOpenApi()` inside the three Express
+route handlers (POST, PUT, DELETE on `/doc-routes`), the handler callbacks were still declared
+as plain synchronous functions `(req, res) => { ... }` instead of `async (req, res) => { ... }`.
+
+### Fix applied
+
+Added `async` to the three handler callbacks in `server/src/routes/docs.ts`:
+- `docsRouter.post('/doc-routes', async (req, res) => {`
+- `docsRouter.put('/doc-routes/:id', async (req, res) => {`
+- `docsRouter.delete('/doc-routes/:id', async (req, res) => {`

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { Router } from 'express';
+import SwaggerParser from '@apidevtools/swagger-parser';
 import { db } from '../db/schema';
 import { validateDocRouteInput } from '../lib/validation';
 
@@ -120,12 +121,25 @@ function generateOpenApiYaml(rows: DocRouteRow[]): string {
   return lines.join('\n') + '\n';
 }
 
-function writeOpenApi(): void {
+type ValidationState =
+  | { status: 'unvalidated' }
+  | { status: 'valid' }
+  | { status: 'invalid'; error: string };
+
+let lastValidation: ValidationState = { status: 'unvalidated' };
+
+async function writeOpenApi(): Promise<void> {
   const rows = stmtListDocRoutes.all() as DocRouteRow[];
-  if (rows.length === 0) return; // don't create an empty file
+  if (rows.length === 0) return;
   const yaml = generateOpenApiYaml(rows);
   fs.mkdirSync(path.dirname(OPENAPI_PATH), { recursive: true });
   fs.writeFileSync(OPENAPI_PATH, yaml, 'utf8');
+  try {
+    await SwaggerParser.validate(OPENAPI_PATH);
+    lastValidation = { status: 'valid' };
+  } catch (err) {
+    lastValidation = { status: 'invalid', error: err instanceof Error ? err.message : String(err) };
+  }
 }
 
 // ---- Helpers ----
@@ -152,7 +166,7 @@ docsRouter.get('/doc-routes', (_req, res) => {
   res.json(rows.map(rowToJson));
 });
 
-docsRouter.post('/doc-routes', (req, res) => {
+docsRouter.post('/doc-routes', async (req, res) => {
   const result = validateDocRouteInput(req.body);
   if (!result.ok) return res.status(400).json({ error: result.error });
 
@@ -179,11 +193,11 @@ docsRouter.post('/doc-routes', (req, res) => {
   });
 
   const id = create();
-  writeOpenApi();
+  await writeOpenApi();
   return res.status(201).json(rowToJson(stmtGetDocRoute.get(id) as DocRouteRow));
 });
 
-docsRouter.put('/doc-routes/:id', (req, res) => {
+docsRouter.put('/doc-routes/:id', async (req, res) => {
   const id = Number(req.params.id);
   if (!stmtGetDocRoute.get(id)) return res.status(404).json({ error: 'Not found' });
 
@@ -212,16 +226,16 @@ docsRouter.put('/doc-routes/:id', (req, res) => {
     for (const e of errors) stmtInsertDocError.run(id, Number(e.status), e.body);
   })();
 
-  writeOpenApi();
+  await writeOpenApi();
   return res.json(rowToJson(stmtGetDocRoute.get(id) as DocRouteRow));
 });
 
-docsRouter.delete('/doc-routes/:id', (req, res) => {
+docsRouter.delete('/doc-routes/:id', async (req, res) => {
   const id = Number(req.params.id);
   stmtDeleteDocErrors.run(id);
   const info = stmtDeleteDocRoute.run(id);
   if (info.changes === 0) return res.status(404).json({ error: 'Not found' });
-  writeOpenApi();
+  await writeOpenApi();
   return res.status(204).send();
 });
 
@@ -229,12 +243,16 @@ docsRouter.get('/openapi-status', (_req, res) => {
   const relativePath = 'docs/openapi.yaml';
   try {
     const stat = fs.statSync(OPENAPI_PATH);
+    const note =
+      lastValidation.status === 'invalid'
+        ? lastValidation.error
+        : 'Arquivo gerado automaticamente.';
     res.json({
       exists: true,
       path: relativePath,
       updatedAt: stat.mtimeMs,
-      validation: 'unvalidated',
-      note: 'Arquivo gerado automaticamente. Valide manualmente se necessário.',
+      validation: lastValidation.status,
+      note,
     });
   } catch {
     res.json({

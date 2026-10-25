@@ -20,7 +20,7 @@ interface StatisticsPageProps {
 export function StatisticsPage({ runs, stats, loading, onToggleHidden, onBatchHidden }: StatisticsPageProps) {
   const [page, setPage] = useState(0);
 
-  const offlineRuns = runs.filter((r) => r.failed === r.total && r.total > 0);
+  const offlineRuns = runs.filter((r) => (r.failed === r.total && r.total > 0) || (r.passed === 0 && r.failed === 0));
   const allOfflineHidden = offlineRuns.length > 0 && offlineRuns.every((r) => r.hidden);
 
   async function handleOfflineToggle() {

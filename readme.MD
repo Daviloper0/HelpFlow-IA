@@ -655,6 +655,40 @@ Everytime you try to solve something in this problem, read the problems.md. But 
 
 Ok, there are three ocasions where it happen, when I keep clicking toggle "Incluir/ignorar" offline, and when i keep switching between failed tests and passed tests. Investigate what's common between those three. Don't try to do anything before telling me what you thought before, and didn't work. ANd what you are thinking now. Write that to a file in the root (helpflow-dashboard/) called "problems.md" and describe what didn't solve that problem, so you don't use that solution again.
 
+The Analysis module say the openAPI document is not validated. What does that mean?
+
+I would like you to add, right after the file is created. How would you do that? Tell me your plan.;
+
+So, just for me to be clear, the delay is after the doc is done, right? Not when the test suite is being ran?
+
+Now, the server crashes everytime I try to run it again, with the following error:
+Error: Transform failed with 1 error:
+C:\Users\Davi\Documents\DEV\GitHub\HelpFlow + IA\helpflow-dashboard\server\src\routes\docs.ts:196:2: ERROR: "await" can only be used inside an "async" function
+    at failureErrorWithLog (C:\Users\Davi\Documents\DEV\GitHub\HelpFlow + IA\helpflow-dashboard\server\node_modules\esbuild\lib\main.js:1752:15)
+    at C:\Users\Davi\Documents\DEV\GitHub\HelpFlow + IA\helpflow-dashboard\server\node_modules\esbuild\lib\main.js:1019:50
+    at responseCallbacks.<computed> (C:\Users\Davi\Documents\DEV\GitHub\HelpFlow + IA\helpflow-dashboard\server\node_modules\esbuild\lib\main.js:886:9)
+    at handleIncomingPacket (C:\Users\Davi\Documents\DEV\GitHub\HelpFlow + IA\helpflow-dashboard\server\node_modules\esbuild\lib\main.js:941:12)
+    at Socket.readFromStdout (C:\Users\Davi\Documents\DEV\GitHub\HelpFlow + IA\helpflow-dashboard\server\node_modules\esbuild\lib\main.js:864:7)
+    at Socket.emit (node:events:514:28)
+    at addChunk (node:internal/streams/readable:567:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:518:3)
+    at Readable.push (node:internal/streams/readable:398:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23) {
+  name: 'TransformError'
+}
+
+Node.js v24.20.0
+Failed running 'src/index.ts'. Waiting for file changes before restarting...
+Look at the problems.md, to see your past solutions and what didn't work, and investigate why it is crashing now.
+
+Everytime you fix a bug, add that fix solution to the problems.md
+
+Now, when total == fails, then the dashboard shows a warning that it might be offline. Do the same, if both passing and failed tests are equal to 0. Any questions on that?
+
+No, you didn't understand, total is the number of tests, it can be 0 with no problem at all. if FAILING and PASSING tests == 0, then show a warning too. Confirm your understanding.
+
+The "Ignorar offline" button isn't working for the passed === 0 && failed === 0, but is working normally to the ones that failed === total.
+
 # Como rodar:
 Necessário Desktop Development with C++, disponível pelo Visual Studio Installer, e o Node JS
 Dentro de helpflow-dashboard, rodar:

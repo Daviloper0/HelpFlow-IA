@@ -12,7 +12,7 @@ function fmtDate(ts: number): string {
 }
 
 function isServerOfflineWarning(run: SuiteRun): boolean {
-  return run.failed === run.total && run.total > 0;
+  return (run.failed === run.total && run.total > 0) || (run.passed === 0 && run.failed === 0);
 }
 
 interface Props {
