@@ -22,7 +22,7 @@ export function App() {
 
   const tests = useTests();
   const docs = useDocRoutes();
-  const openApi = useOpenApiStatus();
+  const { status: openApi, refresh: refreshOpenApi } = useOpenApiStatus();
   const suiteRuns = useSuiteRuns();
 
   const goToTest = useCallback((id: number) => {
@@ -70,7 +70,16 @@ export function App() {
             />
           )}
 
-          {view === 'docs' && <DocsPage routes={docs.routes} tests={tests.tests} loading={docs.loading} onAddRoute={docs.addRoute} onUpdateRoute={docs.updateRoute} onDeleteRoute={docs.deleteRoute} />}
+          {view === 'docs' && (
+            <DocsPage
+              routes={docs.routes}
+              tests={tests.tests}
+              loading={docs.loading}
+              onAddRoute={async (r) => { await docs.addRoute(r); refreshOpenApi(); }}
+              onUpdateRoute={async (id, r) => { await docs.updateRoute(id, r); refreshOpenApi(); }}
+              onDeleteRoute={async (id) => { await docs.deleteRoute(id); refreshOpenApi(); }}
+            />
+          )}
         </div>
       </main>
     </div>

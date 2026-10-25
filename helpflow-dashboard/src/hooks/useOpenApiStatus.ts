@@ -1,20 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import * as api from '../services/api';
 import type { OpenApiStatus } from '../types';
 
 /** Situação do arquivo OpenAPI. Fica null enquanto carrega. */
-export function useOpenApiStatus(): OpenApiStatus | null {
+export function useOpenApiStatus(): { status: OpenApiStatus | null; refresh: () => void } {
   const [status, setStatus] = useState<OpenApiStatus | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    api.getOpenApiStatus().then((result) => {
-      if (!cancelled) setStatus(result);
-    });
-    return () => {
-      cancelled = true;
-    };
+  const refresh = useCallback(() => {
+    api.getOpenApiStatus().then(setStatus);
   }, []);
 
-  return status;
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  return { status, refresh };
 }

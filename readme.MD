@@ -649,6 +649,11 @@ It doesn't need to be tests on the last execution, it can be all suites. Do that
 
 It stills fails, restarted again. Also happened while hiding all tests. Why is it doing that. ECONNRESET always and so does the server crash. Investigate.
 
+Now the server is failing to startup.
+
+Everytime you try to solve something in this problem, read the problems.md. But yes, you can proceed.
+
+Ok, there are three ocasions where it happen, when I keep clicking toggle "Incluir/ignorar" offline, and when i keep switching between failed tests and passed tests. Investigate what's common between those three. Don't try to do anything before telling me what you thought before, and didn't work. ANd what you are thinking now. Write that to a file in the root (helpflow-dashboard/) called "problems.md" and describe what didn't solve that problem, so you don't use that solution again.
 
 # Como rodar:
 Necessário Desktop Development with C++, disponível pelo Visual Studio Installer, e o Node JS

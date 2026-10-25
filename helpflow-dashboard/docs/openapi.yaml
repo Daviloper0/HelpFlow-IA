@@ -1,0 +1,250 @@
+openapi: "3.0.3"
+info:
+  title: "HelpFlow API"
+  version: "1.0.0"
+  description: "Documentação gerada automaticamente pelo HelpFlow Dashboard."
+paths:
+  "/user/cab9e6ce-a004-4d13-988d-1378a52f55e1/promote/{{registeredUserId}}":
+    patch:
+      summary: "Promover Customer a técnico com sucesso"
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              example: {"responseMessage":"User is now a technician","responseUserId":"{{any}}"}
+  "/ticket/{{assignedTicketId}}/solve":
+    patch:
+      summary: "Resolver ticket em progresso"
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              example: {"assignedTo":"4b53bd08-d1c8-4c00-813e-e336397bd050","category":"Printer","createdBy":"7f856fb4-88f9-4788-8097-61bcf463509a","description":"A impressora do 3º andar parou de imprimir","id":"{{any}}","priority":"High","status":"Solved","title":"Impressora não funciona"}
+  "/ticket/{{createdTicketId}}/assign":
+    patch:
+      summary: "Atribuir ticket a técnico válido"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example: {"technicianId":"4b53bd08-d1c8-4c00-813e-e336397bd050"}
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              example: {"assignedTo":"4b53bd08-d1c8-4c00-813e-e336397bd050","category":"Printer","createdBy":"7f856fb4-88f9-4788-8097-61bcf463509a","description":"A impressora do 3º andar parou de imprimir","id":"{{any}}","priority":"High","status":"InProgress","title":"Impressora não funciona"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"INVALID_TECHNICIAN_ID","errorMessage":"Invalid technicianId"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"USER_NOT_TECHNICIAN","errorMessage":"User is not a technician"}
+        "404":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"USER_NOT_FOUND","errorMessage":"User not found"}
+  "/login":
+    post:
+      summary: "Login válido"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example: {"loginEmail":"emailbomba@email.com","loginPassword":"OutraSenha123@!"}
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              example: {"loginMessage":"Login realizado com sucesso","loginUserId":"{{any}}"}
+        "401":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_credentials","errorMessage":"Email ou senha incorretos"}
+        "401":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_credentials","errorMessage":"Email ou senha incorretos"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_password","errorMessage":"EmptyPassword"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_email","errorMessage":"EndsWithDot"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_email","errorMessage":"EndsWithAt"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_email","errorMessage":"TooManyAts"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_email","errorMessage":"StartsWithDot"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_email","errorMessage":"StartsWithAt"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_email","errorMessage":"EmptyEmail"}
+  "/register":
+    post:
+      summary: "Registrar usuário válido"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example: {"registerName":"Novo Usuario","registerEmail":"test{{timestamp}}@example.com","registerPassword":"SenhaSuperSegura123@!"}
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              example: {"responseMessage":"Usuário registrado com sucesso","responseUserId":"{{any}}"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_password","errorMessage":"PasswordHasNoNumber"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_password","errorMessage":"PasswordHasNoSpecialCharacters"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_password","errorMessage":"PasswordHasNoLowerCase"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_password","errorMessage":"PasswordHasNoUpperCase"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_password","errorMessage":"PasswordHasSpaces"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_password","errorMessage":"PasswordTooLong"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_password","errorMessage":"PasswordTooShort"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_password","errorMessage":"EmptyPassword"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_name","errorMessage":"NameTooShort"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_name","errorMessage":"NameTooLong"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_name","errorMessage":"InvalidCharacter"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_name","errorMessage":"InvalidCharacter"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_name","errorMessage":"EmptyName"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_email","errorMessage":"EndsWithDot"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_email","errorMessage":"EndsWithAt"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_email","errorMessage":"TooManyAts"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_email","errorMessage":"StartsWithDot"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_email","errorMessage":"StartsWithAt"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"invalid_email","errorMessage":"EmptyEmail"}
+        "409":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"email_already_exists","errorMessage":"Email já cadastrado"}
+  "/ticket":
+    post:
+      summary: "Criar ticket válido"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example: {"title":"Impressora não funciona","description":"A impressora do 3º andar parou de imprimir","priority":"High","category":"Printer","createdBy":"7f856fb4-88f9-4788-8097-61bcf463509a"}
+      responses:
+        "200":
+          description: "Sucesso"
+          content:
+            application/json:
+              example: {"assignedTo":null,"category":"Printer","createdBy":"7f856fb4-88f9-4788-8097-61bcf463509a","description":"A impressora do 3º andar parou de imprimir","id":"{{any}}","priority":"High","status":"Open","title":"Impressora não funciona"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"INVALID_PRIORITY","errorMessage":"Invalid priority, valid values are: Low, Normal, High"}
+        "400":
+          description: "Erro"
+          content:
+            application/json:
+              example: {"errorCode":"INVALID_USER_ID","errorMessage":"Invalid userId"}

@@ -1,8 +1,13 @@
+import fs from 'fs';
+import path from 'path';
 import { Router } from 'express';
 import { db } from '../db/schema';
 import { validateDocRouteInput } from '../lib/validation';
 
 export const docsRouter = Router();
+
+// docs/openapi.yaml lives at the dashboard root (two levels above server/src/routes/)
+const OPENAPI_PATH = path.join(__dirname, '../../../docs/openapi.yaml');
 
 interface DocErrorRow {
   status: number;
@@ -36,6 +41,92 @@ const stmtUpdateDocRoute  = db.prepare(`
 `);
 const stmtDeleteDocErrors = db.prepare('DELETE FROM doc_route_errors WHERE route_id = ?');
 const stmtDeleteDocRoute  = db.prepare('DELETE FROM doc_routes WHERE id = ?');
+
+// ---- OpenAPI YAML generation ----
+
+function yamlStr(s: string): string {
+  // Wrap in double quotes, escaping backslashes and double quotes inside
+  return '"' + s.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n') + '"';
+}
+
+function tryParseJson(s: string): unknown {
+  if (!s || !s.trim()) return undefined;
+  try { return JSON.parse(s); } catch { return s; }
+}
+
+function generateOpenApiYaml(rows: DocRouteRow[]): string {
+  const lines: string[] = [
+    'openapi: "3.0.3"',
+    'info:',
+    '  title: "HelpFlow API"',
+    '  version: "1.0.0"',
+    '  description: "Documentação gerada automaticamente pelo HelpFlow Dashboard."',
+    'paths:',
+  ];
+
+  // Group by route path
+  const byPath = new Map<string, DocRouteRow[]>();
+  for (const row of rows) {
+    if (!byPath.has(row.route)) byPath.set(row.route, []);
+    byPath.get(row.route)!.push(row);
+  }
+
+  for (const [routePath, routeRows] of byPath) {
+    lines.push(`  ${yamlStr(routePath)}:`);
+
+    for (const row of routeRows) {
+      const method = row.method.toLowerCase();
+      const errors = stmtGetDocErrors.all(row.id) as DocErrorRow[];
+      const hasBody = !['get', 'delete', 'head'].includes(method);
+      const requestBodyParsed = tryParseJson(row.request_body);
+      const successBodyParsed = tryParseJson(row.success_body);
+
+      lines.push(`    ${method}:`);
+      lines.push(`      summary: ${yamlStr(row.title)}`);
+      if (row.description) {
+        lines.push(`      description: ${yamlStr(row.description)}`);
+      }
+
+      if (hasBody && requestBodyParsed !== undefined) {
+        lines.push('      requestBody:');
+        lines.push('        required: true');
+        lines.push('        content:');
+        lines.push('          application/json:');
+        lines.push(`            example: ${JSON.stringify(requestBodyParsed)}`);
+      }
+
+      lines.push('      responses:');
+      lines.push(`        "${row.success_status}":`);
+      lines.push('          description: "Sucesso"');
+      if (successBodyParsed !== undefined) {
+        lines.push('          content:');
+        lines.push('            application/json:');
+        lines.push(`              example: ${JSON.stringify(successBodyParsed)}`);
+      }
+
+      for (const err of errors) {
+        const errBodyParsed = tryParseJson(err.body);
+        lines.push(`        "${err.status}":`);
+        lines.push('          description: "Erro"');
+        if (errBodyParsed !== undefined) {
+          lines.push('          content:');
+          lines.push('            application/json:');
+          lines.push(`              example: ${JSON.stringify(errBodyParsed)}`);
+        }
+      }
+    }
+  }
+
+  return lines.join('\n') + '\n';
+}
+
+function writeOpenApi(): void {
+  const rows = stmtListDocRoutes.all() as DocRouteRow[];
+  if (rows.length === 0) return; // don't create an empty file
+  const yaml = generateOpenApiYaml(rows);
+  fs.mkdirSync(path.dirname(OPENAPI_PATH), { recursive: true });
+  fs.writeFileSync(OPENAPI_PATH, yaml, 'utf8');
+}
 
 // ---- Helpers ----
 
@@ -88,6 +179,7 @@ docsRouter.post('/doc-routes', (req, res) => {
   });
 
   const id = create();
+  writeOpenApi();
   return res.status(201).json(rowToJson(stmtGetDocRoute.get(id) as DocRouteRow));
 });
 
@@ -120,6 +212,7 @@ docsRouter.put('/doc-routes/:id', (req, res) => {
     for (const e of errors) stmtInsertDocError.run(id, Number(e.status), e.body);
   })();
 
+  writeOpenApi();
   return res.json(rowToJson(stmtGetDocRoute.get(id) as DocRouteRow));
 });
 
@@ -128,26 +221,29 @@ docsRouter.delete('/doc-routes/:id', (req, res) => {
   stmtDeleteDocErrors.run(id);
   const info = stmtDeleteDocRoute.run(id);
   if (info.changes === 0) return res.status(404).json({ error: 'Not found' });
+  writeOpenApi();
   return res.status(204).send();
 });
 
 docsRouter.get('/openapi-status', (_req, res) => {
-  res.json({
-    exists: false,
-    path: 'docs/openapi.yaml',
-    updatedAt: null,
-    validation: 'unvalidated',
-    note: 'OpenAPI status inspection not yet implemented.',
-  });
+  const relativePath = 'docs/openapi.yaml';
+  try {
+    const stat = fs.statSync(OPENAPI_PATH);
+    res.json({
+      exists: true,
+      path: relativePath,
+      updatedAt: stat.mtimeMs,
+      validation: 'unvalidated',
+      note: 'Arquivo gerado automaticamente. Valide manualmente se necessário.',
+    });
+  } catch {
+    res.json({
+      exists: false,
+      path: relativePath,
+      updatedAt: null,
+      validation: 'unvalidated',
+      note: 'Adicione uma rota para gerar o arquivo.',
+    });
+  }
 });
 
-docsRouter.get('/stats', (_req, res) => {
-  const { getStats } = require('../db/queries');
-  const stats = getStats();
-  res.json({
-    total: stats.total,
-    lastRanAt: stats.lastRanAt,
-    pass: stats.pass,
-    fail: stats.fail,
-  });
-});
