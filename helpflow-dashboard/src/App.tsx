@@ -66,6 +66,7 @@ export function App() {
               stats={suiteRuns.stats}
               loading={suiteRuns.loading}
               onToggleHidden={suiteRuns.toggleHidden}
+              onBatchHidden={suiteRuns.batchHidden}
             />
           )}
 

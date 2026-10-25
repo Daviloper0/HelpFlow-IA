@@ -135,7 +135,7 @@ export interface GlobalStats {
   totalRuns: number;
   totalExecutions: number;
   avgTestDurationMs: number;
-  slowestTest: { name: string; durationMs: number } | null;
+  slowestTest: { testId: number; name: string; durationMs: number } | null;
   allTimePassed: number;
   allTimeFailed: number;
   lastRunRate: number | null;
@@ -149,6 +149,32 @@ export interface SuiteRunExecution {
   name: string;
   durationMs: number;
   passed: boolean;
+}
+
+export interface TestDurationPoint {
+  ranAt: number;
+  durationMs: number;
+  passed: boolean;
+}
+
+export interface FailingTestStat {
+  testId: number;
+  name: string;
+  streak: number;
+  failRate: number;
+  totalRuns: number;
+  lastPassedAt: number | null;
+  streakStartedAt: number | null;
+}
+
+export interface PassingTestStat {
+  testId: number;
+  name: string;
+  streak: number;
+  passRate: number;
+  totalRuns: number;
+  lastFailedAt: number | null;
+  firstPassedAfterLastFail: number | null;
 }
 
 // ---- Formulários (os campos são sempre texto até a validação) ----

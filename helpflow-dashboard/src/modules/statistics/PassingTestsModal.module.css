@@ -1,0 +1,85 @@
+.empty {
+  font: 500 14px/1.5 var(--font-sans);
+  color: var(--muted);
+  text-align: center;
+  padding: 32px 0;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 400 13px/1.4 var(--font-sans);
+}
+
+.th,
+.thName {
+  padding: 8px 12px;
+  text-align: left;
+  font: 600 11px/1.3 var(--font-sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line-soft);
+  white-space: nowrap;
+}
+
+.thName {
+  width: 40%;
+}
+
+.row:hover td {
+  background: var(--surface-alt, #f5f7fa);
+}
+
+.td,
+.tdName {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--ink);
+  vertical-align: middle;
+}
+
+.tdName {
+  font-weight: 500;
+}
+
+.streak {
+  font-weight: 700;
+  color: #1f9254;
+}
+
+.failStreak {
+  font-weight: 700;
+  color: #e53935;
+}
+
+.streakSub {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.rateHigh { color: #1f9254; font-weight: 600; }
+.rateMid  { color: var(--muted); font-weight: 600; }
+.rateLow  { color: #e53935; font-weight: 600; }
+
+.sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.failDate {
+  color: var(--ink);
+}
+
+.never {
+  color: #1f9254;
+  font-weight: 500;
+}
+
+.muted {
+  color: var(--muted);
+}

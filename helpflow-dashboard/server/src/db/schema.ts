@@ -107,3 +107,10 @@ db.exec(`
     body     TEXT    NOT NULL DEFAULT ''
   );
 `);
+
+// Close the database before the process exits so better-sqlite3 Statement
+// cleanup hooks are removed while the Node environment is still alive.
+function closeDb() { try { db.close(); } catch { /* already closed */ } }
+process.once('SIGTERM', () => { closeDb(); process.kill(process.pid, 'SIGTERM'); });
+process.once('SIGINT',  () => { closeDb(); process.kill(process.pid, 'SIGINT'); });
+process.on('exit', closeDb);

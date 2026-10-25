@@ -24,6 +24,11 @@
   height: 260px;
 }
 
+.chartWrap svg,
+.chartWrap :focus {
+  outline: none;
+}
+
 .filters {
   display: flex;
   gap: 6px;

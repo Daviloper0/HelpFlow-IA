@@ -13,11 +13,23 @@ interface StatisticsPageProps {
   runs: SuiteRun[];
   stats: GlobalStats | null;
   loading: boolean;
-  onToggleHidden: (id: number, hidden: boolean) => void;
+  onToggleHidden: (id: number, hidden: boolean) => Promise<void>;
+  onBatchHidden: (ids: number[], hidden: boolean) => Promise<void>;
 }
 
-export function StatisticsPage({ runs, stats, loading, onToggleHidden }: StatisticsPageProps) {
+export function StatisticsPage({ runs, stats, loading, onToggleHidden, onBatchHidden }: StatisticsPageProps) {
   const [page, setPage] = useState(0);
+
+  const offlineRuns = runs.filter((r) => r.failed === r.total && r.total > 0);
+  const allOfflineHidden = offlineRuns.length > 0 && offlineRuns.every((r) => r.hidden);
+
+  async function handleOfflineToggle() {
+    const hide = !allOfflineHidden;
+    const ids = offlineRuns.filter((r) => r.hidden !== hide).map((r) => r.id);
+    if (ids.length === 0) return;
+    await onBatchHidden(ids, hide);
+    setPage(0);
+  }
 
   const pageCount = Math.max(1, Math.ceil(runs.length / PAGE_SIZE));
   const currentPage = Math.min(page, pageCount - 1);
@@ -45,7 +57,16 @@ export function StatisticsPage({ runs, stats, loading, onToggleHidden }: Statist
             </div>
 
             <div className={styles.historySection}>
-              <h2 className={styles.sectionTitle}>Histórico</h2>
+              <div className={styles.historySectionHeader}>
+                <h2 className={styles.sectionTitle}>Histórico</h2>
+                <button
+                  className={`${styles.offlineToggle} ${allOfflineHidden ? styles.offlineToggleActive : ''}`}
+                  disabled={offlineRuns.length === 0}
+                  onClick={handleOfflineToggle}
+                >
+                  {allOfflineHidden ? 'Incluir offline' : 'Ignorar offline'}
+                </button>
+              </div>
               <div className={styles.tableContainer}>
                 <SuiteRunsTable runs={pageRuns} allRuns={runs} onToggleHidden={onToggleHidden} />
               </div>

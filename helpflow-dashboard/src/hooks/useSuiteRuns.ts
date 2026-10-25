@@ -20,9 +20,13 @@ export function useSuiteRuns() {
 
   const toggleHidden = useCallback(async (id: number, hidden: boolean) => {
     await api.setSuiteRunHidden(id, hidden);
-    // Reload both runs and stats since hiding affects aggregates
     reload();
   }, [reload]);
 
-  return { runs, stats, loading, reload, toggleHidden };
+  const batchHidden = useCallback(async (ids: number[], hidden: boolean) => {
+    await Promise.all(ids.map((id) => api.setSuiteRunHidden(id, hidden)));
+    reload();
+  }, [reload]);
+
+  return { runs, stats, loading, reload, toggleHidden, batchHidden };
 }

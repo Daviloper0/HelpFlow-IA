@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import type { GlobalStats, SuiteRun } from '../../types';
 import { AvgDurationModal } from './AvgDurationModal';
+import { FailingTestsModal } from './FailingTestsModal';
+import { PassingTestsModal } from './PassingTestsModal';
+import { SlowestTestModal } from './SlowestTestModal';
 import { SuiteRunsModal } from './SuiteRunsModal';
 import styles from './KpiRow.module.css';
 
@@ -24,11 +27,23 @@ interface KpiRowProps {
 export function KpiRow({ stats, runs }: KpiRowProps) {
   const [showRuns, setShowRuns] = useState(false);
   const [showAvgDuration, setShowAvgDuration] = useState(false);
+  const [showSlowest, setShowSlowest] = useState(false);
+  const [showPassing, setShowPassing] = useState(false);
+  const [showFailing, setShowFailing] = useState(false);
 
   return (
     <>
       {showRuns && <SuiteRunsModal runs={runs} onClose={() => setShowRuns(false)} />}
       {showAvgDuration && <AvgDurationModal runs={runs} onClose={() => setShowAvgDuration(false)} />}
+      {showSlowest && stats.slowestTest && (
+        <SlowestTestModal
+          testId={stats.slowestTest.testId}
+          testName={stats.slowestTest.name}
+          onClose={() => setShowSlowest(false)}
+        />
+      )}
+      {showPassing && <PassingTestsModal onClose={() => setShowPassing(false)} />}
+      {showFailing && <FailingTestsModal onClose={() => setShowFailing(false)} />}
     <div className={styles.row}>
       <div className={`${styles.card} ${styles.clickable}`} onClick={() => setShowRuns(true)}>
         <span className={styles.label}>Execuções</span>
@@ -48,7 +63,10 @@ export function KpiRow({ stats, runs }: KpiRowProps) {
         <span className={styles.sub}>por teste</span>
       </div>
 
-      <div className={styles.card}>
+      <div
+        className={`${styles.card} ${stats.slowestTest ? styles.clickable : ''}`}
+        onClick={stats.slowestTest ? () => setShowSlowest(true) : undefined}
+      >
         <span className={styles.label}>Teste mais lento da última execução</span>
         {stats.slowestTest ? (
           <>
@@ -60,13 +78,13 @@ export function KpiRow({ stats, runs }: KpiRowProps) {
         )}
       </div>
 
-      <div className={styles.card}>
+      <div className={`${styles.card} ${styles.clickable}`} onClick={() => setShowPassing(true)}>
         <span className={styles.label}>Aprovados</span>
         <span className={`${styles.value} ${styles.passValue}`}>{stats.allTimePassed.toLocaleString('pt-BR')}</span>
         <span className={styles.sub}>no total</span>
       </div>
 
-      <div className={styles.card}>
+      <div className={`${styles.card} ${styles.clickable}`} onClick={() => setShowFailing(true)}>
         <span className={styles.label}>Falhas</span>
         <span className={`${styles.value} ${styles.failValue}`}>{stats.allTimeFailed.toLocaleString('pt-BR')}</span>
         <span className={styles.sub}>no total</span>

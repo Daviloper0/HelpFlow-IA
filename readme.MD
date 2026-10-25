@@ -619,6 +619,37 @@ The bucket doesn't look like it is working, I restarted the server, but nothing 
 
 Oh, it was my problem, actually, when you click on the bar, it shows. The problem is, there are bars that are really small, and the user can't actually click on it, so change that if the user clicks on the background, it works too, even if the bar is not visible. Does that make sense? Tell me your plan
 
+When I click on the column at the vertical bar graph, the whole table gets a black border, remove it
+
+Now, back to the KPI's. The slowest test from last execution, should now be hoverable, and when clicked, should open a context window. In that window, there should be a line chart, with how many ms/s that test is taking in the y axis and when was the test. Remember to use the same library as before. Any questions? Don't proceed, first tell me your plan if you don't have any questions.
+
+Filters, just like the avg duration modal, and also a all time on. All your idea seems good. Proceed
+
+The chart you've just created doesn't run. The "slowest test from last execution" is showing, as well as the name, but the graph, in the context window, doesn't show.
+
+Now, add a button, on the right side of the history that hides all tests that total === falhas, it should be a toggle button. Any questions? I want suggestions about it's label text
+
+That button shouldn't actually hide the tests, it should make them all "hidden", just like if the visibility button was clicked. Does that make sense?
+
+Everytime I click on the toggle button, the server and vite fail, why?
+
+Is the risk still there? I even tested again, and it didn't fail. Investigate again, and if the threat is real, then fix it
+
+Now for the passing tests, what are some good ways to present information about passing tests? Give me at least 5 ideas
+
+Using the same "Analysis/Context window" that the cards open, I will want option 1, 2, 4, the one with pass rate is harder, no need for that. Any questions about how to implement, ask me. Don't reinvent the wheel
+
+Remember what happned with the "slowest test from last execution" chart? That didn't show?
+
+If the passing rate is < 50% then leave it red, if it's 50%, then grey, and if it's >50%, then green. No need for the last failure to be in red too.
+
+Now do a similar window for the failures KPI. Ask me question if something is ambiguous
+
+It doesn't need to be tests on the last execution, it can be all suites. Do that change for the passing tests too.
+
+It stills fails, restarted again. Also happened while hiding all tests. Why is it doing that. ECONNRESET always and so does the server crash. Investigate.
+
+
 # Como rodar:
 Necessário Desktop Development with C++, disponível pelo Visual Studio Installer, e o Node JS
 Dentro de helpflow-dashboard, rodar:

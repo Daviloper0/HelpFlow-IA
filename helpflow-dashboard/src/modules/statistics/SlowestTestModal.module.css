@@ -1,0 +1,58 @@
+.filterRow {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.filterBtn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--muted);
+  font: 500 12px/1 var(--font-sans);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  user-select: none;
+}
+
+.filterBtn:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.filterActive {
+  background: #32a0e9;
+  border-color: #32a0e9;
+  color: #ffffff;
+}
+
+.filterActive:hover {
+  background: #1b8fd6;
+  border-color: #1b8fd6;
+  color: #ffffff;
+}
+
+.chartWrap {
+  width: 100%;
+  height: 300px;
+}
+
+.chartWrap svg,
+.chartWrap :focus {
+  outline: none;
+}
+
+.hint {
+  font: 400 12px/1.4 var(--font-sans);
+  color: var(--muted);
+  margin: 0;
+}
+
+.empty {
+  font: 500 14px/1.5 var(--font-sans);
+  color: var(--muted);
+  text-align: center;
+  padding: 32px 0;
+}

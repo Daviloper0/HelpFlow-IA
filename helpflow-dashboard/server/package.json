@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "commonjs",
   "scripts": {
-    "dev": "node --watch --require tsx/cjs src/index.ts",
+    "dev": "node --watch --watch-path=./src --require tsx/cjs src/index.ts",
     "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit"
   },

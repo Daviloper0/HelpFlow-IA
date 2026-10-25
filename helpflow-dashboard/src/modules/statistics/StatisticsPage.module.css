@@ -37,6 +37,40 @@
   width: 100%;
 }
 
+.historySectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.offlineToggle {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--muted);
+  font: 500 12px/1 var(--font-sans);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.offlineToggle:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.offlineToggleActive {
+  background: #fef9c3;
+  border-color: #ca8a04;
+  color: #92400e;
+}
+
+.offlineToggleActive:hover {
+  background: #fef08a;
+}
+
 @media (min-width: 1500px) {
   .midRow {
     flex-direction: row;

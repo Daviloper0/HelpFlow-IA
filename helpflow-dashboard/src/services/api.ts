@@ -3,10 +3,13 @@ import type {
   ApiTestInput,
   DocRoute,
   DocRouteInput,
+  FailingTestStat,
   GlobalStats,
   OpenApiStatus,
+  PassingTestStat,
   SuiteRun,
   SuiteRunExecution,
+  TestDurationPoint,
   TestRun,
 } from '../types';
 
@@ -89,6 +92,10 @@ export function getSuiteRunExecutions(id: number): Promise<SuiteRunExecution[]> 
   return request(`/api/suite-runs/${id}/executions`);
 }
 
+export function getTestDurationHistory(testId: number): Promise<TestDurationPoint[]> {
+  return request(`/api/tests/${testId}/duration-history`);
+}
+
 export function setSuiteRunHidden(id: number, hidden: boolean): Promise<void> {
   return request(`/api/suite-runs/${id}/hidden`, { method: 'PATCH', body: JSON.stringify({ hidden }) });
 }
@@ -117,4 +124,12 @@ export function deleteDocRoute(id: number): Promise<void> {
 
 export function getOpenApiStatus(): Promise<OpenApiStatus> {
   return request('/api/openapi-status');
+}
+
+export function getPassingTestsStats(): Promise<PassingTestStat[]> {
+  return request('/api/tests/passing-stats');
+}
+
+export function getFailingTestsStats(): Promise<FailingTestStat[]> {
+  return request('/api/tests/failing-stats');
 }
