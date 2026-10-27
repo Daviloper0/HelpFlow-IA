@@ -102,6 +102,17 @@ real fix.
 
 ## Fix applied
 
+**`db.transaction()` also creates internal Statements** (BEGIN, SAVEPOINT, COMMIT, ROLLBACK).
+Any `db.transaction(fn)` call inside a request handler creates a Transaction object that
+immediately goes out of scope after the request completes — orphaned, same crash as inline
+`db.prepare()`. All `db.transaction()` calls must also be at module level, same rule as
+`db.prepare()`.
+
+After the initial `db.prepare()` fix was applied, `server/src/routes/docs.ts` still had two
+inline `db.transaction()` calls (one inside the POST handler, one inside the PUT handler).
+These were hoisted to module-level constants `txCreateDocRoute` and `txUpdateDocRoute` in the
+same pass as the `db.prepare()` fix.
+
 All `db.prepare()` calls moved to module level in:
 - `server/src/db/queries.ts` — every query function now reuses a module-level Statement constant
 - `server/src/routes/docs.ts` — all inline prepares in route handlers and `rowToJson` hoisted to top of file
@@ -158,6 +169,41 @@ it received 201 and failed.
    - Admin UUID in promote routes → `{{adminUserId}}`
    - Non-admin UUID in promote routes → `{{customerSetupId}}`
    - Already-technician UUID in promote routes → `{{technicianSetupId}}`
+
+---
+
+## Server crash on fresh DB: `Assertion failed: (env) != nullptr` at startup
+
+### The crash
+
+Same stack trace as the Statement cleanup hook crash, but happening at startup before any
+requests are made.
+
+### Cause
+
+Two separate issues in `server/src/db/schema.ts`:
+
+1. **Migration ordering**: the `doc_routes.description` column check ran *before* the
+   `CREATE TABLE IF NOT EXISTS doc_routes` block. On a fresh DB, `ALTER TABLE doc_routes
+   ADD COLUMN description` threw `no such table`, terminating the process mid-init.
+
+2. **Ephemeral pragma Statements**: every `db.pragma('table_info(...)')` call in the
+   migration code internally creates a Statement object that immediately goes out of scope
+   (better-sqlite3 doesn't keep a reference after the call returns). These orphaned Statements
+   accumulate in GC limbo during startup. When `node --watch` restarts and the V8 environment
+   is torn down, the GC tries to finalize them but the env is already gone → same assertion
+   failure as the per-request crash. The two setter pragmas (`journal_mode`, `foreign_keys`)
+   had the same problem.
+
+### Fix applied
+
+- Moved the `doc_routes.description` migration to after the `CREATE TABLE` block.
+- Replaced all `db.pragma('table_info(...)')` calls with module-level prepared statements
+  using `pragma_table_info` (a SQLite table-valued function): stored in `stmtColsExec`,
+  `stmtColsTests`, `stmtColsDocRoutes`. These stay in `db.stmts` and are finalized cleanly
+  by `db.close()` on shutdown.
+- Replaced `db.pragma('journal_mode = WAL')` and `db.pragma('foreign_keys = ON')` with
+  `db.exec('PRAGMA ...')` — `exec` does not create Statement objects.
 
 ---
 

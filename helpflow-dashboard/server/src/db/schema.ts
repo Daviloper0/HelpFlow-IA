@@ -9,8 +9,8 @@ fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 
 export const db = new Database(DB_PATH);
 
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+db.exec('PRAGMA journal_mode = WAL');
+db.exec('PRAGMA foreign_keys = ON');
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS tests (
@@ -41,27 +41,19 @@ db.exec(`
     ON executions(test_id, ran_at DESC);
 `);
 
-// Migrations
-const execCols = (db.pragma('table_info(executions)') as { name: string }[]).map((c) => c.name);
-if (!execCols.includes('actual_request_body')) {
-  db.exec(`ALTER TABLE executions ADD COLUMN actual_request_body TEXT NOT NULL DEFAULT ''`);
-}
-if (!execCols.includes('actual_route')) {
-  db.exec(`ALTER TABLE executions ADD COLUMN actual_route TEXT NOT NULL DEFAULT ''`);
-}
+// Migrations — use try/exec to avoid creating any Statement objects during init.
+// SQLite raises "duplicate column name" (SQLITE_ERROR) if the column already exists; we swallow it.
+function addCol(sql: string) { try { db.exec(sql); } catch { /* already exists */ } }
 
-const testCols = (db.pragma('table_info(tests)') as { name: string }[]).map((c) => c.name);
-if (!testCols.includes('capture_path')) {
-  db.exec(`ALTER TABLE tests ADD COLUMN capture_path TEXT NOT NULL DEFAULT ''`);
-}
-if (!testCols.includes('capture_as')) {
-  db.exec(`ALTER TABLE tests ADD COLUMN capture_as TEXT NOT NULL DEFAULT ''`);
-}
-if (!testCols.includes('sort_order')) {
+addCol(`ALTER TABLE executions ADD COLUMN actual_request_body TEXT NOT NULL DEFAULT ''`);
+addCol(`ALTER TABLE executions ADD COLUMN actual_route TEXT NOT NULL DEFAULT ''`);
+addCol(`ALTER TABLE tests ADD COLUMN capture_path TEXT NOT NULL DEFAULT ''`);
+addCol(`ALTER TABLE tests ADD COLUMN capture_as TEXT NOT NULL DEFAULT ''`);
+try {
   db.exec(`ALTER TABLE tests ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0`);
   // Seed existing rows: sort_order = id * 10 (leaves room for intermediate values)
   db.exec(`UPDATE tests SET sort_order = id * 10 WHERE sort_order = 0`);
-}
+} catch { /* already exists */ }
 
 // suite_runs table
 db.exec(`
@@ -76,20 +68,9 @@ db.exec(`
   );
 `);
 
-// Add suite_run_id to executions if not present
-const execColsV2 = (db.pragma('table_info(executions)') as { name: string }[]).map((c) => c.name);
-if (!execColsV2.includes('suite_run_id')) {
-  db.exec(`ALTER TABLE executions ADD COLUMN suite_run_id INTEGER REFERENCES suite_runs(id)`);
-}
-
-// Add description to doc_routes if not present
-const docRouteCols = (db.pragma('table_info(doc_routes)') as { name: string }[]).map((c) => c.name);
-if (!docRouteCols.includes('description')) {
-  db.exec(`ALTER TABLE doc_routes ADD COLUMN description TEXT NOT NULL DEFAULT ''`);
-}
+addCol(`ALTER TABLE executions ADD COLUMN suite_run_id INTEGER REFERENCES suite_runs(id)`);
 
 db.exec(`
-
   CREATE TABLE IF NOT EXISTS doc_routes (
     id             INTEGER PRIMARY KEY AUTOINCREMENT,
     method         TEXT    NOT NULL CHECK(method IN ('GET','POST','PUT','PATCH','DELETE')),
@@ -107,6 +88,8 @@ db.exec(`
     body     TEXT    NOT NULL DEFAULT ''
   );
 `);
+
+addCol(`ALTER TABLE doc_routes ADD COLUMN description TEXT NOT NULL DEFAULT ''`);
 
 // Close the database before the process exits so better-sqlite3 Statement
 // cleanup hooks are removed while the Node environment is still alive.

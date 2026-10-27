@@ -26,7 +26,8 @@ interface DocRouteRow {
   success_body: string;
 }
 
-// ---- Module-level prepared statements ----
+// ---- Module-level prepared statements and transactions ----
+// db.transaction() also creates internal Statements (BEGIN/COMMIT/etc.) — must be at module level.
 const stmtGetDocErrors   = db.prepare('SELECT status, body FROM doc_route_errors WHERE route_id = ? ORDER BY id ASC');
 const stmtListDocRoutes  = db.prepare('SELECT * FROM doc_routes ORDER BY id ASC');
 const stmtGetDocRoute    = db.prepare('SELECT * FROM doc_routes WHERE id = ?');
@@ -42,6 +43,39 @@ const stmtUpdateDocRoute  = db.prepare(`
 `);
 const stmtDeleteDocErrors = db.prepare('DELETE FROM doc_route_errors WHERE route_id = ?');
 const stmtDeleteDocRoute  = db.prepare('DELETE FROM doc_routes WHERE id = ?');
+
+interface DocRouteInsertParams {
+  method: unknown; route: unknown; title: unknown; description: unknown;
+  requestBody: unknown; successStatus: unknown; successBody: unknown;
+  errors: DocErrorRow[];
+}
+
+const txCreateDocRoute = db.transaction((p: DocRouteInsertParams) => {
+  const info = stmtInsertDocRoute.run({
+    method: p.method, route: p.route, title: (p.title as string).trim(),
+    description: typeof p.description === 'string' ? p.description : '',
+    requestBody: typeof p.requestBody === 'string' ? p.requestBody : '',
+    successStatus: Number(p.successStatus),
+    successBody: typeof p.successBody === 'string' ? p.successBody : '',
+  });
+  const id = info.lastInsertRowid as number;
+  for (const e of p.errors) stmtInsertDocError.run(id, Number(e.status), e.body);
+  return id;
+});
+
+interface DocRouteUpdateParams extends DocRouteInsertParams { id: number; }
+
+const txUpdateDocRoute = db.transaction((p: DocRouteUpdateParams) => {
+  stmtUpdateDocRoute.run({
+    id: p.id, method: p.method, route: p.route, title: (p.title as string).trim(),
+    description: typeof p.description === 'string' ? p.description : '',
+    requestBody: typeof p.requestBody === 'string' ? p.requestBody : '',
+    successStatus: Number(p.successStatus),
+    successBody: typeof p.successBody === 'string' ? p.successBody : '',
+  });
+  stmtDeleteDocErrors.run(p.id);
+  for (const e of p.errors) stmtInsertDocError.run(p.id, Number(e.status), e.body);
+});
 
 // ---- OpenAPI YAML generation ----
 
@@ -177,22 +211,7 @@ docsRouter.post('/doc-routes', async (req, res) => {
       )
     : [];
 
-  const create = db.transaction(() => {
-    const info = stmtInsertDocRoute.run({
-      method: b.method,
-      route: b.route,
-      title: (b.title as string).trim(),
-      description: typeof b.description === 'string' ? b.description : '',
-      requestBody: typeof b.requestBody === 'string' ? b.requestBody : '',
-      successStatus: Number(b.successStatus),
-      successBody: typeof b.successBody === 'string' ? b.successBody : '',
-    });
-    const id = info.lastInsertRowid as number;
-    for (const e of errors) stmtInsertDocError.run(id, Number(e.status), e.body);
-    return id;
-  });
-
-  const id = create();
+  const id = txCreateDocRoute({ method: b.method, route: b.route, title: b.title, description: b.description, requestBody: b.requestBody, successStatus: b.successStatus, successBody: b.successBody, errors });
   await writeOpenApi();
   return res.status(201).json(rowToJson(stmtGetDocRoute.get(id) as DocRouteRow));
 });
@@ -211,20 +230,7 @@ docsRouter.put('/doc-routes/:id', async (req, res) => {
       )
     : [];
 
-  db.transaction(() => {
-    stmtUpdateDocRoute.run({
-      id,
-      method: b.method,
-      route: b.route,
-      title: (b.title as string).trim(),
-      description: typeof b.description === 'string' ? b.description : '',
-      requestBody: typeof b.requestBody === 'string' ? b.requestBody : '',
-      successStatus: Number(b.successStatus),
-      successBody: typeof b.successBody === 'string' ? b.successBody : '',
-    });
-    stmtDeleteDocErrors.run(id);
-    for (const e of errors) stmtInsertDocError.run(id, Number(e.status), e.body);
-  })();
+  txUpdateDocRoute({ id, method: b.method, route: b.route, title: b.title, description: b.description, requestBody: b.requestBody, successStatus: b.successStatus, successBody: b.successBody, errors });
 
   await writeOpenApi();
   return res.json(rowToJson(stmtGetDocRoute.get(id) as DocRouteRow));
