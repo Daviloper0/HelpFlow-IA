@@ -20,9 +20,12 @@ Em um processo seletivo de uma grande empresa, eu passei para etapa que eu dever
 
 Como eu não tinha assinatura de nenhuma IA, a ideia inicial era basicamente usar a versão online do Claude para gerar o esboço inicial do dashboard, e depois baixar o resultado e ir fazendo sem agente nenhum, por não ser possível. Mas depois de começar, eu peguei o gosto e assinei o claude code.
 
-O prompt inicial, com as especificações que deveriam ter no dashboard, estão no ./prompts/dashboard-vspec.md
+O prompt inicial, com as especificações que deveriam ter no dashboard, estão no .prompts/dashboard-vspec.md
+Depois, o backend do dashboard foi desenvolvido como no .prompts/dashboard-bspec.md
 
-# Como o desenvolvimento prosseguiu?
+# Como o desenvolvimento prosseguiu até chegar na transição para o SDD?
+Em geral, o desenvolvimento prosseguiu incrementalmente, literalmente vibecodando. Se tinha erro, eu mandava pra IA corrigir, e se não tinha, adicionava novas features. Existe um log dos meus prompts em .prompts/backend ou .prompts/frontend, mas também estou deixando de maneira mais compacta nessas mesmas pastas, para que fique de fácil compreensão, o que foi feito até agora, e quais erros deram. Talvez depois até adicione algum visual que explique melhor. Ao lado de cada feature, adicionei um [n], onde n é a ordem na qual aquilo aconteceu, tanto no log completo, quanto no resumido, mas separado entre backend e frontend. Alguns prompts eram tanto para o frontend quanto para o backend, mas eu separei. Se por algum motivo você queira ver isso, só olhar o histórico de commits até o "Tentativa de prompt automático". Também é necessário deixar claro, que apesar de algumas mudanças terem sido no visual (e por isso o prompt em frontend), também foram feitas alterações no código do backend, às vezes para dar uma informação adicional que não existia antes.
+
 
 # Como rodar:
 Necessário Desktop Development with C++, disponível pelo Visual Studio Installer, e o Node JS
