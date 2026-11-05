@@ -1,260 +1,35 @@
-# Objetivo
-Melhorar o fluxo de desenvolvimento de um projeto já existente, que é o HelpFlow. O problema atual com o helpflow, é que fazer os testes manualmente demandam tempo, e possuem muitos casos, já que Haskell é uma linguagem com grande presença de tipos, então além do backend ter suas regras, o haskell ainda possui algumas nuâncias que devem ser respeitadas. Além disso, o código não possui documentação, então outra ideia seria que à partir dos casos de testes e das definições das funções, uma documentação em formato OpenAPI fosse gerada automaticamente, caso não exista. Abaixo, estarão os prompts utilizados, apesar de que não são mostrados 1 por 1
+# Sobre o HelpFlow Dashboard
 
+## O que é o HelpFlow Dashboard
+O HelpFlow Dashboard é uma ferramenta de análise e teste de API feita especificamente para o [HelpFlow](https://github.com/Daviloper0/helpflow). No sistema, é possível testar, verificar o motivo que alguns testes falharam, verificar estatísticas sobre o histórico de testes, assim como gerar documentação OpenAPI baseado nos testes (EXPLICAR O MOTIVO DISSO). Ele foi feito para ser compatível com o [HelpFlow](https://github.com/Daviloper0/helpflow), mas pode ser que eu aumente o escopo no futuro
 
+## Por que era necessário um dashboard para o HelpFlow?
+Contextualizando, o [HelpFlow](https://github.com/Daviloper0/helpflow) é um backend de um sistema de gerenciamento de tickets feito em Haskell, como projeto final de uma disciplina da faculdade. O projeto tinha sido feito com um prazo de desenvolvimento curto, pois o quadrimestre na UFABC é muito mais curto que um semestre tradicional, e além disso, não tinha conhecimento algum de haskell antes de entrar na disciplina, o que agravou ainda mais o desenvolvimento.
 
-Yes, I want a proper library. You can add whatever you want, JUST ASK ME FIRST, don't make anything from scratch, that doesn't help. You asked for permission, I just didn't see it, so prompt it the next time
+Por conta desses detalhes, o HelpFlow, apesar dos tipos garantirem mudanças apenas para estados válidos, e existir alguns testes para verificar o comportamento das funções internas do backend, eu não tinha nenhum programa que testava a API de forma automática e gerava um relatório para isso. Os testes de API eram feitos com o Insomnia, mas não era uma suíte automatizada. Além disso, outra coisa que não tinha conseguido fazer para o HelpFlow era um banco de dados separado para testes. E que ainda não está feito, mas pretendo adicionar.
 
-The front end is giving the following error: [plugin:vite:import-analysis] Failed to resolve import "react-is" from "node_modules/.vite/deps/recharts.js?v=b0c117a0". Does the file exist?
+Resumindo: Sem testes, o HelpFlow, mesmo com os tipos garantindo algumas coisas, ainda estava frágil.
 
-Below 1500px of width, the graph doesn't show.
+Essas são as razões porque um dashboard era necessário, mas não explicam o porquê de eu fazer.
 
-Show the offline server warning for everytime that total failed tests == total of tests
+Eu nunca tinha reparado isso antes, mas mesmo com grande interesse por inteligência artificial (no geral), eu nunca tinha parado para usar de verdade uma das vertentes de IA que mais avançaram nos últimos 5 anos, que são as LLMs, junto com os harness. Eu via muitas pessoas criando sites e aplicativos inteiros utilizando IA, e aquilo aguçava a minha curiosidade, mas, para mim, nunca tinha feito sentido testar algo sem ter a base técnica por trás, e então, continuei estudando assuntos de programação, no geral.
 
-Now, as you just changed the library to Recharts, change the donut graph. It should show visibly how many passed and how many doesn't. If it isn't possible using a donut graph, say it
+Em um processo seletivo de uma grande empresa, eu passei para etapa que eu deveria mostrar o meu melhor projeto com IA, mas eu não tinha nada que usasse IA intensivamente, e então decidi fazer algo que nunca tinha feito antes, que é "vibecodar" um projeto inteiro com IA, e nada melhor do que resolver um problema que eu tive em outro projeto, que já conheço.
 
-The trend arrow should be another card. Perhaps, instead of having a text below the graph, try putting a text in the center, that shows passsing/not passing, in numbers, with respective green and red colors
-Can't the label be inside? And change the colors to pastel toned colors
-Actually, let's do the following, make them individual, no pie chart, only numbers. One for passing and one for not passing.
-For the offline server in the History table, just put a yellow warning icon , with the background that is already there, but only show the "Servidor offline" message if the use hovers the icon
+# Como a primeira parte do dashboard foi feita?
 
-"⚠ Todos os testes falharam após uma execução parcialmente bem-sucedida. O servidor HelpFlow pode estar offline.
-" Parcialmente bem-sucedida makes no sense now, rephrase it, and tell me, before actually fixing it
+Como eu não tinha assinatura de nenhuma IA, a ideia inicial era basicamente usar a versão online do Claude para gerar o esboço inicial do dashboard, e depois baixar o resultado e ir fazendo sem agente nenhum, por não ser possível. Mas depois de começar, eu peguei o gosto e assinei o claude code.
 
-# OpenAPI module.
+O prompt inicial, com as especificações que deveriam ter no dashboard, estão no .prompts/dashboard-vspec.md
+Depois, o backend do dashboard foi desenvolvido como no .prompts/dashboard-bspec.md
 
-Now, there is the OpenAPI documentation module. And I want it to be based on the API tests only, not on the real program, and the way I want to do it, is that, for the user to paste a prompt in their harness to actually run the tests. How could we do that? Give me ideas
+# Como o desenvolvimento prosseguiu até chegar na transição para o SDD?
+Em geral, o desenvolvimento prosseguiu incrementalmente, literalmente vibecodando. Se tinha erro, eu mandava pra IA corrigir, e se não tinha, adicionava novas features. Existe um log dos meus prompts em .prompts/backend ou .prompts/frontend, mas também estou deixando de maneira mais compacta nessas mesmas pastas, para que fique de fácil compreensão, o que foi feito até agora, e quais erros deram. Talvez depois até adicione algum visual que explique melhor. Ao lado de cada feature, adicionei um [n], onde n é a ordem na qual aquilo aconteceu, tanto no log completo, quanto no resumido, mas separado entre backend e frontend. Alguns prompts eram tanto para o frontend quanto para o backend, mas eu separei. Se por algum motivo você queira ver isso, só olhar o histórico de commits até o "Tentativa de prompt automático". Também é necessário deixar claro, que apesar de algumas mudanças terem sido no visual (e por isso o prompt em frontend), também foram feitas alterações no código do backend, às vezes para dar uma informação adicional que não existia antes.
 
-I also like the idea 4. But it shouldn't be created automatically, instead,there should be a button, besides the add route button that creates automatically, and after creating, it opens a window, asking if the user wants to copy the prompt of the created route documentation for AI to fill.
 
-If all routes from tests are already on the docs, then a window should pop up, saying that all tests are already on the documentation.
-
-Any more questions? Say your plan before proceeding
-
-Ai should fill the description, and perhaps add more errors that aren't catched by the api tester, but there are a couple of tests that test what shouldn't be put on the api call. Is that your idea? And for the question you've made, you can do the exact string match with the placeholders
-
-Yeah, but it should only be filled with errors that actually exist in the backend, right? You shall proceed though.
-
-Change the name from "Gerar dos testes" to "Gerar à partir dos testes"
-
-First, there should be a way to delete a route, add a button, and there should also be a way to edit a route. You could copy the style from API tests
-
-There should be a description field for routes
-
-There should be a section title for description on the route, just like "Exemplo de requisição" Or "Resposta esperada"
-
-Now, notice how many of the routes aren't actually routes. Here is an idea of how it could work.
-
-When the user clicks the button to generate from tests, only the tests that generates a valid response, such as 200 should be treated as routes, and the possible errors sections should be all those other tests aren't a success. So for a post ticket there should be only one route. If there are multiple valid routes (multiple routes with 200 as response), then a window should open, to compare those. The comparison should show all the differences between them. Ask me questions about how a comparison could work to make sure you make a good comparison window.
-
-
-What counts as a "success" test? Is it category === 'success', or expectedStatus === 200, or both conditions must be true?
-
-What should the comparison show? The most obvious differences are requestBody and expectedBody (response). Should it also compare the test name/description, or only the request/response data?
-
-What does the user do in the comparison window? Options I can think of:
-
-Pick one test as the canonical route (the other gets discarded or becomes an error entry)
-Manually type a merged version on the spot
-Just see the diff and pick one — keeping it read-only
-What happens to the non-chosen test(s)? Should they become error entries on the route, or just be skipped entirely?
-
-More than 2 matches? Is it realistic to have 3+ success tests on the same route? If so, should the comparison show all of them at once, or is it always pairwise?
-I
-1. I think both, all tests that are success are also expectedStatus === 200, so it doesn't matter
-2. Show everything, because some tests are actually edge cases that should work, but aren't the expected general case. So it must be shown.
-3. Pick one test only
-4. The non-chosen tests should just be skipped, because they are there just to show what happens on edge cases. But on the prompt that will be shown to user, the system MUST be clear that edge cases should be also included in the end of the description
-5. If it is pairwise, how would you do it?
-
-Option A — Tournament (sequential): Show test A vs B, user picks one winner → show winner vs C → continue until one remains. Simple UI, but the user loses sight of earlier options as they go.
-
-Option B — All at once in columns: Show all N tests side by side (or stacked on mobile), each as a column with all its fields. The user picks one with a radio/select. They see everything at once and can compare freely without committing incrementally.
-
-I'd recommend Option B — it's more transparent and the user doesn't have to remember what they already saw. If there are 5+ matches the layout gets wide, but that's an edge case and a horizontal scroll is fine.
-
-Does that work for you?
-
-I think option B is better, but they don't need to be side by side, they can be hidden, and the user just see the details when they open them, just like the tests, or the routes, there is a resume, but how it works will only be shown when clicked. Any more questions?
-
-
-The expected status is not a necessary field in the comparison, we know it's valid.
-
-"Os demais serão ignorados, mas devem ser mencionados na descrição ao usar o prompt de IA."
-
-The "Devem ser mencionados na descrição ao usar o prompt de IA" was only a text for you to add in the prompt for the other AI, for the user a text like "Os outros usos serão sinalizados para que a IA adicione na descrição". Just rewrite what I've said to something that makes more sense
-
-The prompt should be shown to the user, so he knows what he is copying. Put the copy prompt on top of the window, and the prompt below it.
-
-Now, back to the statistic module.
-
-Every time the card is hovered, there should be a color change in the background, that doesn't affect the readability of the text. By card, I mean the row in the KPI
-
-It looks good, now, analyze how the datils window (from the history table) work. Copy the looks.
-
-All the cards that you made hoverable should open a window. And the user shouldn't be able to copy the text
-
-The execution shoud list all suits, ask me more questions about how they should look in the context window.
-
-Distrubution of test durations look like a good idea, ask me more questions about it.
-
-Mais lento should list the full test name, details
-
-Let's do one by one of the tests we've done. Don't do all at once, start with the first and first, show me your plan.
-
-1. Yes, show the table with those data + regression, recovery and new failures. But if you think it will be too big, tel me.
-2. We should use pages, let's start with 10 rows per page.
-3.  Yes, it should
-4. Only the visible ones.
-
-Any more questions?
-
-Just one thing, add the cursor:pointer only to the ones that have a context/analisys window, so remove from the ones that don't from the KPI
-
-Make the context window for the executions, bigger, perhaps 80% of the width. Instead of a "Ver Detalhes" button, make it that if the user clicks on it, then the detailed test suit window will open. The same change can be done to ALL tables. Any other questions?
-
-The hover on the rows aren't interactive enough. They don't look like they are being hovered. Make them darker while hovering
-
-I think the hover effect isn't working, I restarted the server, but it didn't work. The click works, and so does the cursor:pointer, but it doesn't get dark
-
-Change "Mais lento - Última execução" to "Teste mais lento da última execução"
-
-Now, tell me what were your ideas, and perhaps tell me more ideas of what to do in the medium duration of the tests
-
-Couldn't we use a vertical bar chart where x is the time in ms and the y is the number of tests that used that time in ms?
-
-Average over time is also good, I like it, just don't know how we could visualize it.
-
-I actually want both of the ideas. Just let make it more clear
-Sure, just let's try with 50ms of range, not 0-100 and do it from the last suite ran. It does fit naturally, but i think it should have some filters, hours, days and weeks. The line chart looks good. Always only the visible tests, no hidden tests should be considered. Any more questions?
-
-When clicked on the test on the bar chart, another window should open, if possible showing the tests. DO you have a better idea on how to show the tests of a given time?
-
-The bucket doesn't look like it is working, I restarted the server, but nothing shows when I click the bar.
-
-Oh, it was my problem, actually, when you click on the bar, it shows. The problem is, there are bars that are really small, and the user can't actually click on it, so change that if the user clicks on the background, it works too, even if the bar is not visible. Does that make sense? Tell me your plan
-
-When I click on the column at the vertical bar graph, the whole table gets a black border, remove it
-
-Now, back to the KPI's. The slowest test from last execution, should now be hoverable, and when clicked, should open a context window. In that window, there should be a line chart, with how many ms/s that test is taking in the y axis and when was the test. Remember to use the same library as before. Any questions? Don't proceed, first tell me your plan if you don't have any questions.
-
-Filters, just like the avg duration modal, and also a all time on. All your idea seems good. Proceed
-
-The chart you've just created doesn't run. The "slowest test from last execution" is showing, as well as the name, but the graph, in the context window, doesn't show.
-
-Now, add a button, on the right side of the history that hides all tests that total === falhas, it should be a toggle button. Any questions? I want suggestions about it's label text
-
-That button shouldn't actually hide the tests, it should make them all "hidden", just like if the visibility button was clicked. Does that make sense?
-
-Everytime I click on the toggle button, the server and vite fail, why?
-
-Is the risk still there? I even tested again, and it didn't fail. Investigate again, and if the threat is real, then fix it
-
-Now for the passing tests, what are some good ways to present information about passing tests? Give me at least 5 ideas
-
-Using the same "Analysis/Context window" that the cards open, I will want option 1, 2, 4, the one with pass rate is harder, no need for that. Any questions about how to implement, ask me. Don't reinvent the wheel
-
-Remember what happned with the "slowest test from last execution" chart? That didn't show?
-
-If the passing rate is < 50% then leave it red, if it's 50%, then grey, and if it's >50%, then green. No need for the last failure to be in red too.
-
-Now do a similar window for the failures KPI. Ask me question if something is ambiguous
-
-It doesn't need to be tests on the last execution, it can be all suites. Do that change for the passing tests too.
-
-It stills fails, restarted again. Also happened while hiding all tests. Why is it doing that. ECONNRESET always and so does the server crash. Investigate.
-
-Now the server is failing to startup.
-
-Everytime you try to solve something in this problem, read the problems.md. But yes, you can proceed.
-
-Ok, there are three ocasions where it happen, when I keep clicking toggle "Incluir/ignorar" offline, and when i keep switching between failed tests and passed tests. Investigate what's common between those three. Don't try to do anything before telling me what you thought before, and didn't work. ANd what you are thinking now. Write that to a file in the root (helpflow-dashboard/) called "problems.md" and describe what didn't solve that problem, so you don't use that solution again.
-
-The Analysis module say the openAPI document is not validated. What does that mean?
-
-I would like you to add, right after the file is created. How would you do that? Tell me your plan.;
-
-So, just for me to be clear, the delay is after the doc is done, right? Not when the test suite is being ran?
-
-Now, the server crashes everytime I try to run it again, with the following error:
-Error: Transform failed with 1 error:
-C:\Users\Davi\Documents\DEV\GitHub\HelpFlow + IA\helpflow-dashboard\server\src\routes\docs.ts:196:2: ERROR: "await" can only be used inside an "async" function
-    at failureErrorWithLog (C:\Users\Davi\Documents\DEV\GitHub\HelpFlow + IA\helpflow-dashboard\server\node_modules\esbuild\lib\main.js:1752:15)
-    at C:\Users\Davi\Documents\DEV\GitHub\HelpFlow + IA\helpflow-dashboard\server\node_modules\esbuild\lib\main.js:1019:50
-    at responseCallbacks.<computed> (C:\Users\Davi\Documents\DEV\GitHub\HelpFlow + IA\helpflow-dashboard\server\node_modules\esbuild\lib\main.js:886:9)
-    at handleIncomingPacket (C:\Users\Davi\Documents\DEV\GitHub\HelpFlow + IA\helpflow-dashboard\server\node_modules\esbuild\lib\main.js:941:12)
-    at Socket.readFromStdout (C:\Users\Davi\Documents\DEV\GitHub\HelpFlow + IA\helpflow-dashboard\server\node_modules\esbuild\lib\main.js:864:7)
-    at Socket.emit (node:events:514:28)
-    at addChunk (node:internal/streams/readable:567:12)
-    at readableAddChunkPushByteMode (node:internal/streams/readable:518:3)
-    at Readable.push (node:internal/streams/readable:398:5)
-    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23) {
-  name: 'TransformError'
-}
-
-Node.js v24.20.0
-Failed running 'src/index.ts'. Waiting for file changes before restarting...
-Look at the problems.md, to see your past solutions and what didn't work, and investigate why it is crashing now.
-
-Everytime you fix a bug, add that fix solution to the problems.md
-
-Now, when total == fails, then the dashboard shows a warning that it might be offline. Do the same, if both passing and failed tests are equal to 0. Any questions on that?
-
-No, you didn't understand, total is the number of tests, it can be 0 with no problem at all. if FAILING and PASSING tests == 0, then show a warning too. Confirm your understanding.
-
-The "Ignorar offline" button isn't working for the passed === 0 && failed === 0, but is working normally to the ones that failed === total.
-
-
-BACKEND: 
-Now, create a file called PROBLEMS.md. This is where everytime you find a bug, you should log your solutions there too, so if the bugs happen again, you will know where not to look. It won't be read by a human, so, optimize the writing to not use a lot of tokens, as everytime you are solving a problem, you WILL look there, this is unnegotiable. So, the workflow is the following:
-1. Someone tells you a bug
-2. You ask questions to really understand the bug, so, when it happens, what happens, in what conditions, and so on
-3. You look for it on the PROBLEMS.md file, if the bug doesn't exist, write it down, describing what's happening, in a way everytime you open that file, you can find a list of all the bugs you solved, or if it's not really a bug. If it does exist, understand the existing solutions, and what they solve, and what they don't.
-4. Every solution you find, write on that file
-
-What I don't want: 
-1. A copy of what you said in the chat
-2. A fake solution, an honest no is better
-
-I changed computers, and because of that, the users aren't the same. This is why some tests failed. But the thing is, doesn't matter if it's the first time running or the last.
-
-[1] PATCH /user/cab9e6ce-a004-4d13-988d-1378a52f55e1/promote/4b53bd08-d1c8-4c00-813e-e336397bd050
-Requisição: (sem corpo)
-Resposta esperada: status 409, {"errorCode":"ALREADY_TECHNICIAN","errorMessage":"User is already a technician"}
-Resposta recebida: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"Administrator not found"}
-
-[2] PATCH /user/4b53bd08-d1c8-4c00-813e-e336397bd050/promote/7f856fb4-88f9-4788-8097-61bcf463509a
-Requisição: (sem corpo)
-Resposta esperada: status 403, {"errorCode":"NOT_ADMINISTRATOR","errorMessage":"Only administrators can promote users to technician"}
-Resposta recebida: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"Administrator not found"}
-
-[3] PATCH /user/cab9e6ce-a004-4d13-988d-1378a52f55e1/promote/00000000-0000-0000-0000-000099999999
-Requisição: (sem corpo)
-Resposta esperada: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"User not found"}
-Resposta recebida: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"Administrator not found"}
-
-[4] PATCH /user/cab9e6ce-a004-4d13-988d-1378a52f55e1/promote/{{registeredUserId}}
-Requisição: (sem corpo)
-Resposta esperada: status 200, {"responseMessage":"User is now a technician","responseUserId":"{{any}}"}
-Resposta recebida: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"Administrator not found"}
-
-[5] PATCH /ticket/{{assignedTicketId}}/solve
-Requisição: (sem corpo)
-Resposta esperada: status 200, {"assignedTo":"4b53bd08-d1c8-4c00-813e-e336397bd050","category":"Printer","createdBy":"7f856fb4-88f9-4788-8097-61bcf463509a","description":"A impressora do 3º andar parou de imprimir","id":"{{any}}","priority":"High","status":"Solved","title":"Impressora não funciona"}
-Resposta recebida: status 400, {"errorCode":"INVALID_TICKET_ID","errorMessage":"Invalid ticketId"}
-
-[6] PATCH /ticket/{{createdTicketId}}/assign
-Requisição: {"technicianId": "cab9e6ce-a004-4d13-988d-1378a52f55e1"}
-Resposta esperada: status 400, {"errorCode":"USER_NOT_TECHNICIAN","errorMessage":"User is not a technician"}
-Resposta recebida: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"User not found"}
-
-[7] PATCH /ticket/{{createdTicketId}}/assign
-Requisição: {"technicianId": "4b53bd08-d1c8-4c00-813e-e336397bd050"}
-Resposta esperada: status 200, {"assignedTo":"4b53bd08-d1c8-4c00-813e-e336397bd050","category":"Printer","createdBy":"7f856fb4-88f9-4788-8097-61bcf463509a","description":"A impressora do 3º andar parou de imprimir","id":"{{any}}","priority":"High","status":"InProgress","title":"Impressora não funciona"}
-Resposta recebida: status 404, {"errorCode":"USER_NOT_FOUND","errorMessage":"User not found"}
-
-The other test that failed was the "Rejeitar email duplicado", that don't show here, because i executed the test two times. But the first time, they fail. Don't forget to add the problem in problems.md, following the guideline in readme.md
-
-Can't we have an alternative? I can give you the credentials, but imagine doing that for every computer?
-
-Is there a way so that the first time a db is ran, it creates an admin with default password and user?
+# Como rodar:
+Necessário Desktop Development with C++, disponível pelo Visual Studio Installer, e o Node JS
+Dentro de helpflow-dashboard, rodar:
+* npm run dev (rodar frontend)
+e depois: cd server
+e por fim: npm run dev novamente
