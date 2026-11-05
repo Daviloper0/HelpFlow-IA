@@ -26,6 +26,9 @@ Depois, o backend do dashboard foi desenvolvido como no .prompts/dashboard-bspec
 # Como o desenvolvimento prosseguiu até chegar na transição para o SDD?
 Em geral, o desenvolvimento prosseguiu incrementalmente, literalmente vibecodando. Se tinha erro, eu mandava pra IA corrigir, e se não tinha, adicionava novas features. Existe um log dos meus prompts em .prompts/backend ou .prompts/frontend, mas também estou deixando de maneira mais compacta nessas mesmas pastas, para que fique de fácil compreensão, o que foi feito até agora, e quais erros deram. Talvez depois até adicione algum visual que explique melhor. Ao lado de cada feature, adicionei um [n], onde n é a ordem na qual aquilo aconteceu, tanto no log completo, quanto no resumido, mas separado entre backend e frontend. Alguns prompts eram tanto para o frontend quanto para o backend, mas eu separei. Se por algum motivo você queira ver isso, só olhar o histórico de commits até o "Tentativa de prompt automático". Também é necessário deixar claro, que apesar de algumas mudanças terem sido no visual (e por isso o prompt em frontend), também foram feitas alterações no código do backend, às vezes para dar uma informação adicional que não existia antes.
 
+# O que vem na transição para o SDD?
+Não é exatamente SDD porque já estou no meio do projeto, e em todas fontes que eu vi, primeiro deveria ter feito as especificações, para depois escrever código. Mas ainda acho que as mudanças valem a pena.
+
 
 # Como rodar:
 Necessário Desktop Development with C++, disponível pelo Visual Studio Installer, e o Node JS
