@@ -29,6 +29,7 @@ Em geral, o desenvolvimento prosseguiu incrementalmente, literalmente vibecodand
 # O que vem na transição para o SDD?
 Não é exatamente SDD porque já estou no meio do projeto, e em todas fontes que eu vi, primeiro deveria ter feito as especificações, para depois escrever código. Mas ainda acho que as mudanças valem a pena.
 
+Usei o /init para gerar o arquivo CLAUDE.md
 
 # Como rodar:
 Necessário Desktop Development with C++, disponível pelo Visual Studio Installer, e o Node JS

@@ -1,7 +1,6 @@
-helpflow-backend/
-helpflow-dashboard/node_modules/*
-helpflow-dashboard/server/node_modules/*
-helpflow-dashbaord/server/data/
-helpflow-dashboard/server/data/helpflow.db
-helpflow-dashboard/server/data/helpflow.db-shm
-helpflow-dashboard/server/data/helpflow.db-wal
+node_modules/
+server/node_modules/*
+/server/data/
+/server/data/helpflow.db
+/server/data/helpflow.db-shm
+/server/data/helpflow.db-wal
