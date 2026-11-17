@@ -34,7 +34,7 @@ src/api/
 - All calls use paths starting with `/api/...`, prefixed by a base URL built by `buildUrl(path)` (in `request.ts`, used by both `request` and `runAll`). The base URL comes from `VITE_API_URL` (read through `import.meta.env`). When it is not set it is empty, so paths stay relative and the Vite proxy handles them exactly as today. Tests set it to the address of a real backend. `buildUrl` reads `VITE_API_URL` each time it is called, so tests can set it after importing.
 - Vite proxies `/api` to the dashboard backend (`http://localhost:3001`, see `vite.config.ts`).
 - Request and response bodies are JSON, except the `runAll` response, which is NDJSON (one JSON object per line) streamed as the tests finish (see below).
-- Types (`ApiTest`, `ApiTestInput`, `DocRoute`, `DocRouteInput`, `FailingTestStat`, `GlobalStats`, `OpenApiStatus`, `PassingTestStat`, `SuiteRun`, `SuiteRunExecution`, `TestDurationPoint`, `TestRun`) come from `src/types`.
+- Types (`DocsOpenApiFileStatus`, `DocsRoute`, `DocsRouteDraft`, `EndpointTestCase`, `EndpointTestCaseDraft`, `EndpointTestCaseResult`, `StatisticsEndpointTestDuration`, `StatisticsEndpointTestResultInSuite`, `StatisticsFailingEndpointTest`, `StatisticsOverview`, `StatisticsPassingEndpointTest`, `StatisticsSuiteExecution`) come from `src/types`. They are being renamed (see `01-type-names.md`); the code keeps the old names until that spec is implemented.
 
 ## `request.ts`: `request<T>(path, init?)` and `buildUrl(path)`
 `buildUrl(path)` returns the base URL (see Transport) followed by `path`.
@@ -56,18 +56,18 @@ Creating, editing, deleting and running tests.
 
 | Function | Method and path | Returns |
 |---|---|---|
-| `listTests()` | `GET /api/tests` | `ApiTest[]` |
-| `createTest(input)` | `POST /api/tests` (body: `input`) | `ApiTest` |
-| `updateTest(id, input)` | `PUT /api/tests/:id` (body: `input`) | `ApiTest` |
+| `listTests()` | `GET /api/tests` | `EndpointTestCase[]` |
+| `createTest(input)` | `POST /api/tests` (body: `input`) | `EndpointTestCase` |
+| `updateTest(id, input)` | `PUT /api/tests/:id` (body: `input`) | `EndpointTestCase` |
 | `deleteTest(id)` | `DELETE /api/tests/:id` | `void` |
-| `runTest(test)` | `POST /api/tests/:id/run` (id taken from `test.id`) | `TestRun` |
+| `runTest(test)` | `POST /api/tests/:id/run` (id taken from `test.id`) | `EndpointTestCaseResult` |
 
 ### `runAll(onResult)`
 `POST /api/tests/run-all`. Runs the whole suite and delivers results as they arrive instead of waiting for the end.
 
 - Does not use `request`; calls `fetch` directly (through `buildUrl`).
 - If the response is not `ok` or has no body, throws `Error("HTTP <status>")`. Unlike `request`, the backend's `error` field is not read here.
-- The response body is a stream of newline-delimited JSON (NDJSON): one JSON object per line, each shaped `{ testId: number } & TestRun`.
+- The response body is a stream of newline-delimited JSON (NDJSON): one JSON object per line, each shaped `{ testId: number } & EndpointTestCaseResult`.
 - The stream is decoded incrementally. Lines are buffered, so a line split across chunks is only parsed once complete. Blank lines are skipped. When the stream ends, a non-empty leftover (a last line without a trailing newline) is parsed like any other line.
 - A line that is not valid JSON makes `runAll` reject and stops the stream. Results already delivered stay delivered.
 - Reading the stream is done by `readNdjsonStream` (see `ndjson.ts` below), so it can be tested directly.
@@ -88,24 +88,24 @@ Suite run history and test statistics. It mixes `/api/suite-runs` and `/api/test
 
 | Function | Method and path | Returns |
 |---|---|---|
-| `listSuiteRuns()` | `GET /api/suite-runs` | `SuiteRun[]` |
-| `getSuiteRunExecutions(id)` | `GET /api/suite-runs/:id/executions` | `SuiteRunExecution[]` |
+| `listSuiteRuns()` | `GET /api/suite-runs` | `StatisticsSuiteExecution[]` |
+| `getSuiteRunExecutions(id)` | `GET /api/suite-runs/:id/executions` | `StatisticsEndpointTestResultInSuite[]` |
 | `setSuiteRunHidden(id, hidden)` | `PATCH /api/suite-runs/:id/hidden` (body: `{ hidden }`) | `void` |
-| `getGlobalStats()` | `GET /api/suite-runs/statistics` | `GlobalStats` |
-| `getTestDurationHistory(testId)` | `GET /api/tests/:testId/duration-history` | `TestDurationPoint[]` |
-| `getPassingTestsStats()` | `GET /api/tests/passing-stats` | `PassingTestStat[]` |
-| `getFailingTestsStats()` | `GET /api/tests/failing-stats` | `FailingTestStat[]` |
+| `getGlobalStats()` | `GET /api/suite-runs/statistics` | `StatisticsOverview` |
+| `getTestDurationHistory(testId)` | `GET /api/tests/:testId/duration-history` | `StatisticsEndpointTestDuration[]` |
+| `getPassingTestsStats()` | `GET /api/tests/passing-stats` | `StatisticsPassingEndpointTest[]` |
+| `getFailingTestsStats()` | `GET /api/tests/failing-stats` | `StatisticsFailingEndpointTest[]` |
 
 ## `docs.ts`: docs module
 Everything related to OpenAPI documentation. `getOpenApiStatus` stays here even though the analysis module displays it, because its data is about the documentation.
 
 | Function | Method and path | Returns |
 |---|---|---|
-| `listDocRoutes()` | `GET /api/doc-routes` | `DocRoute[]` |
-| `createDocRoute(input)` | `POST /api/doc-routes` (body: `input`) | `DocRoute` |
-| `updateDocRoute(id, input)` | `PUT /api/doc-routes/:id` (body: `input`) | `DocRoute` |
+| `listDocRoutes()` | `GET /api/doc-routes` | `DocsRoute[]` |
+| `createDocRoute(input)` | `POST /api/doc-routes` (body: `input`) | `DocsRoute` |
+| `updateDocRoute(id, input)` | `PUT /api/doc-routes/:id` (body: `input`) | `DocsRoute` |
 | `deleteDocRoute(id)` | `DELETE /api/doc-routes/:id` | `void` |
-| `getOpenApiStatus()` | `GET /api/openapi-status` | `OpenApiStatus` |
+| `getOpenApiStatus()` | `GET /api/openapi-status` | `DocsOpenApiFileStatus` |
 
 ## Error contract
 - Every function except `runAll` rejects with an `Error` whose message is the backend's `error` field, or `HTTP <status>` as a fallback.
