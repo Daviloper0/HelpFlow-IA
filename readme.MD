@@ -31,6 +31,8 @@ Não é exatamente SDD porque já estou no meio do projeto, e em todas fontes qu
 
 Usei o /init para gerar o arquivo CLAUDE.md
 
+O primeiro spec que crei foi o 00-api.md do frontend, descrevendo algumas mudanças. Acho que foi a primeira vez que realmente parei para olhar o código. À partir de agora também estarei implementando testes. O Claude escolheu o Vitest como framework, e parece a escolha sólida pois é integrado nativamente com o Vite. Vale a pena dizer que o spec foi gerado automaticamente, baseado no api.ts.
+
 # Como rodar:
 Necessário Desktop Development with C++, disponível pelo Visual Studio Installer, e o Node JS
 Dentro de helpflow-dashboard, rodar:

@@ -1,6 +1,7 @@
 node_modules/
 server/node_modules/*
 /server/data/
-/server/data/helpflow.db
-/server/data/helpflow.db-shm
-/server/data/helpflow.db-wal
+server/data/helpflow.db
+server/data/helpflow.db-shm
+server/data/helpflow.db-wal
+server/data/helpflow.db-shm

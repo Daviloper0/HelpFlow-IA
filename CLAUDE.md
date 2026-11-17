@@ -47,7 +47,7 @@ There are no automated tests in this repo.
 
 **Database** (`server/src/db/`) — SQLite via `better-sqlite3`. Schema is applied on startup in `schema.ts`. Migrations are done inline with `addCol()` helper (swallows "duplicate column" errors). DB file lives at `server/data/helpflow.db` by default; override with `DB_PATH` env var.
 
-**Config** (`server/src/config.ts`) — reads `PORT` (default 3001), `HELPFLOW_BASE_URL` (target API under test, default `http://localhost:4284`) and `REQUEST_TIMEOUT_MS` (default 10000). The frontend also hardcodes the HelpFlow URL in `src/constants/http.ts`.
+**Config** (`server/src/config.ts`) — reads `PORT` (default 3001), `HELPFLOW_BASE_URL` (target API under test, default `http://localhost:4284`) and `REQUEST_TIMEOUT_MS` (default 10000) and `OPENAPI_PATH` (where the generated OpenAPI file is written, default `docs/openapi.yaml`). The frontend also hardcodes the HelpFlow URL in `src/constants/http.ts`.
 
 **OpenAPI generation** (`routes/docs.ts`) — builds an OpenAPI 3 spec from the `doc_routes` and `doc_route_errors` tables, then validates it with `@apidevtools/swagger-parser`.
 
@@ -60,6 +60,8 @@ There are no automated tests in this repo.
 Before writing any code, check the specs in specs/. Don't implement anything until there is a spec for your development. All codes MUST have tests before implementation, and you shouldn't do the implementation without my approval to do it. In the specs folder, ignore the backend, frontend, helpflow folders and the  dashboard-bspec.md and dashboard-vspec.md files. Everything else you should look.
 
 There is also a problems folder. Everytime you are implementing a spec, and there is a problem, you should look into the problems/ folder. Every file in the problems file is related to a spec. For example, if you are developing an ficticious spec 00-automated-tests.md, and you encounter a problem, you should check the problems folder, if there is no 00-automated-tests.md, you should create it. Notice that that is just an example.
+
+Everytime you change something in the code, you should make a list, of all the files that were changed. Show the list on the chat, no need to create a new file.
 
 ## What you shouldn't do
 * Don't implement anything that isn't on spec.
@@ -78,5 +80,6 @@ There is also a problems folder. Everytime you are implementing a spec, and ther
 2. Readable names that tell what's going on, so, no variables called a, b, c, or something that isn't meaningful.
 3. Use the don't repeat yourself principle.
 4. If a function uses a type, then it should match the type/interface it's based on.
-5. There should NEVER be any kind of MOCK server.
+5. There should NEVER be any kind of MOCK server in the application code. Exception: tests may use fakes and stub servers (for example a stub of the HelpFlow API, or fake `fetch` responses).
 6. If you change a file name, change the imports for every other file that uses it.
+7. If you are writing comments on code, then it should be in english
