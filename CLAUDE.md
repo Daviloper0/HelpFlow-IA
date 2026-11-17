@@ -57,7 +57,7 @@ There are no automated tests in this repo.
 - Desktop Development with C++ (Visual Studio) — required by `better-sqlite3` native bindings
 
 ## Spec Driven Development
-Before writing any code, check the specs in specs/. Don't implement anything until there is a spec for your development. All codes MUST have tests before implementation, and you shouldn't do the implementation without my approval to do it. In the specs folder, ignore the backend, frontend, helpflow folders and the  dashboard-bspec.md and dashboard-vspec.md files. Everything else you should look.
+Before writing any code, check the specs in specs/. Don't implement anything until there is a spec for your development. All codes MUST have tests before implementation, and you shouldn't do the implementation without my approval to do it. In the specs folder, ignore the dashboard-bspec.md and dashboard-vspec.md files, every full_log.md file (they are historic logs), and specs/frontend/features.md (also historic). Everything else you should look.
 
 There is also a problems folder. Everytime you are implementing a spec, and there is a problem, you should look into the problems/ folder. Every file in the problems file is related to a spec. For example, if you are developing an ficticious spec 00-automated-tests.md, and you encounter a problem, you should check the problems folder, if there is no 00-automated-tests.md, you should create it. Notice that that is just an example.
 

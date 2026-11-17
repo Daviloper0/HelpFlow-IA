@@ -34,7 +34,7 @@ src/api/
 - All calls use paths starting with `/api/...`, prefixed by a base URL built by `buildUrl(path)` (in `request.ts`, used by both `request` and `runAll`). The base URL comes from `VITE_API_URL` (read through `import.meta.env`). When it is not set it is empty, so paths stay relative and the Vite proxy handles them exactly as today. Tests set it to the address of a real backend. `buildUrl` reads `VITE_API_URL` each time it is called, so tests can set it after importing.
 - Vite proxies `/api` to the dashboard backend (`http://localhost:3001`, see `vite.config.ts`).
 - Request and response bodies are JSON, except the `runAll` response, which is NDJSON (one JSON object per line) streamed as the tests finish (see below).
-- Types (`DocsOpenApiFileStatus`, `DocsRoute`, `DocsRouteDraft`, `EndpointTestCase`, `EndpointTestCaseDraft`, `EndpointTestCaseResult`, `StatisticsEndpointTestDuration`, `StatisticsEndpointTestResultInSuite`, `StatisticsFailingEndpointTest`, `StatisticsOverview`, `StatisticsPassingEndpointTest`, `StatisticsSuiteExecution`) come from `src/types`. They are being renamed (see `01-type-names.md`); the code keeps the old names until that spec is implemented.
+- Types (`DocsOpenApiFileStatus`, `DocsRoute`, `DocsRouteDraft`, `EndpointTestCase`, `EndpointTestCaseDraft`, `EndpointTestCaseResult`, `StatisticsEndpointTestDuration`, `StatisticsEndpointTestResultInSuite`, `StatisticsFailingEndpointTest`, `StatisticsOverview`, `StatisticsPassingEndpointTest`, `StatisticsSuiteExecution`) come from `src/types`. They were renamed by `01-type-names.md`.
 
 ## `request.ts`: `request<T>(path, init?)` and `buildUrl(path)`
 `buildUrl(path)` returns the base URL (see Transport) followed by `path`.
@@ -137,6 +137,10 @@ Written before the code, as CLAUDE.md requires. All tests import from their fina
 - Every other test creates the data it needs, so it does not depend on another test having run first.
 
 The backend process and the temporary database are removed after each run.
+
+## Order
+- This spec is implemented after `01-type-names.md`.
+- Nothing is implemented until every file has been reviewed manually, which means committing the changes.
 
 ## Points to review in this spec
 - `runAll` duplicates part of the error handling in `request` and ignores the backend `error` message (candidate for DRY, per CLAUDE.md). Decided not to change the error handling for now.

@@ -1,6 +1,6 @@
 # 01 - Type names
 
-File affected: `src/types/index.ts`, and every file that uses these types (about 36 files, more than 185 uses; `TestStatus` and `TestCategory` add more).
+File affected: `src/types/index.ts`, and every file that uses these types (45 files in `src/`, including the tests in `src/api/`).
 
 ## Purpose
 Rename the types whose names do not say what they are. Behavior does not change; only names do.
@@ -52,7 +52,7 @@ Not renamed: `View`, `HttpMethod`, and all field names.
 - Only type names change. Field names, functions and behavior stay as they are.
 - A new name must not collide with an existing identifier. Check before renaming.
 - Every use is renamed in the same change: `src/` (hooks, modules, utils, `src/api/` and its tests).
-- `specs/frontend/00-api.md` already uses the new names. The code keeps the old names until this spec is implemented.
+- `specs/frontend/00-api.md` already uses the new names, and so does the code since this spec was implemented.
 - A builder in `src/api/tests/helpers/builders.ts` is named `build` plus the name of the type it returns. For example `buildEndpointTestCaseDraft` and `buildDocsRoute`. The comment at the top of that file, which explains "Unsaved" and "Saved", changes to explain `Draft` instead.
 - The comments in `src/types/index.ts` are in Portuguese and are translated to English in the same change (CLAUDE.md rule 7).
 
@@ -64,7 +64,6 @@ There is no new behavior, so no new tests. The checks are:
 
 ## Order
 - This spec is implemented before `00-api`, so the new `src/api/` files use the final names from the start.
-- Nothing is implemented until every file has been reviewed manually.
 
 ## Points to review in this spec
 None open.
